@@ -7,6 +7,8 @@ filetype plugin on
 set statusline+=%F
 highlight ExtraWhitespace ctermbg=red guibg=red
 match ExtraWhitespace /\s\+$/
+command Rmtrailws %s/\s\+$//g
+command GitCommitPush !git commit -am 'made updates';git push origin master
 autocmd BufWinEnter * match ExtraWhitespace /\s\+$/
 autocmd InsertEnter * match ExtraWhitespace /\s\+\%#\@<!$/
 autocmd InsertLeave * match ExtraWhitespace /\s\+$/
