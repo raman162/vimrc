@@ -11,6 +11,8 @@ command Rmtrailws %s/\s\+$//g
 command GitCommitPush !git commit -am 'made updates';git push origin master
 command GitPullMaster !git pull origin master
 command OpenSpec call OpenRailsRspec()
+command OpenSpecTarget call OpenRailsRspecTarget()
+command CopyFileToClipBoard !cat % | xclip -selection c
 autocmd BufWinEnter * match ExtraWhitespace /\s\+$/
 autocmd InsertEnter * match ExtraWhitespace /\s\+\%#\@<!$/
 autocmd InsertLeave * match ExtraWhitespace /\s\+$/
@@ -30,4 +32,14 @@ function! OpenRailsRspec()
   let spec_dir = substitute(spec_file, '\(spec.*\)\(\/.*rb$\)', '\1', '')
   execute "silent" "!" "mkdir" "-p" spec_dir
   execute 'vert' 'new' spec_file
+endfunction
+
+function! OpenRailsRspecTarget()
+  let current_file = @%
+  let target_file = substitute(current_file, '^spec\/', 'app/','')
+  let target_file = substitute(target_file, '_spec\.rb$', '\.rb', '')
+  let target_file = substitute(target_file, '^spec\/', 'app/','')
+  let target_dir = substitute(target_file, '\(app.*\)\(\/.*rb$\)', '\1', '')
+  execute "silent" "!" "mkdir" "-p" target_dir
+  execute 'vert' 'new' target_file
 endfunction
