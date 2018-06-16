@@ -1,4 +1,5 @@
 set nu
+set spr
 set expandtab ts=2 sw=2 ai
 set wildignore+=*/tmp/*,*.so,*.swp,*.zip
 au BufNewFile,BufRead *.hamlc set ft=haml
@@ -15,6 +16,7 @@ command OpenSpec call OpenRailsRspec()
 command OpenSpecTarget call OpenRailsRspecTarget()
 command CopyFileToClipBoard execute "silent !cat % | xclip -selection c" | redraw!
 command CopyFileNameToClipBoard execute "silent ! echo % | tr -d '\\n' | xclip -selection c" | redraw!
+command GWA norm 1GVGgw
 autocmd BufWinEnter * match ExtraWhitespace /\s\+$/
 autocmd InsertEnter * match ExtraWhitespace /\s\+\%#\@<!$/
 autocmd InsertLeave * match ExtraWhitespace /\s\+$/
