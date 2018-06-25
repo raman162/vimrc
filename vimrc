@@ -13,6 +13,7 @@ command GitCommitPush !git commit -am 'made updates';git push origin master
 command GitPullMaster !git pull origin master
 command PendingTasks call ShowPendingTasks()
 command OpenSpec call OpenRailsRspec()
+command RunSpec call RunRailsRspec()
 command OpenSpecTarget call OpenRailsRspecTarget()
 command CopyFileToClipBoard execute "silent !cat % | xclip -selection c" | redraw!
 command CopyFileNameToClipBoard execute "silent ! echo % | tr -d '\\n' | xclip -selection c" | redraw!
@@ -30,13 +31,26 @@ function! SetMdFileSettings()
 endfunction
 
 function! OpenRailsRspec()
-  let current_file = @%
-  let spec_file = substitute(current_file, '^app\/', 'spec/','')
-  let spec_file = substitute(spec_file, '\.rb$', '_spec.rb','')
-  let spec_dir = substitute(spec_file, '\(spec.*\)\(\/.*rb$\)', '\1', '')
+  let spec_file = SpecFile()
+  let spec_dir = SpecDir()
   execute "silent" "!" "mkdir" "-p" spec_dir
   execute 'vert' 'new' spec_file
   execute "redraw!"
+endfunction
+
+function! RunRailsRspec()
+  execute "! bundle exec rspec" SpecFile()
+endfunction
+
+function SpecDir()
+  return substitute(SpecFile(), '\(spec.*\)\(\/.*rb$\)', '\1', '')
+endfunction
+
+function! SpecFile()
+  let current_file = @%
+  let spec_file = substitute(current_file, '^app\/', 'spec/','')
+  let spec_file = substitute(spec_file, '\.rb$', '_spec.rb','')
+  return spec_file
 endfunction
 
 function! OpenRailsRspecTarget()
