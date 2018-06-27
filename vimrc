@@ -13,7 +13,8 @@ command GitCommitPush !git commit -am 'made updates';git push origin master
 command GitPullMaster !git pull origin master
 command PendingTasks call ShowPendingTasks()
 command OpenSpec call OpenRailsRspec()
-command RunSpec call RunRailsRspec()
+command RunFileSpec call RunRailsRspec()
+command RunSpec execute "! bundle exec rspec"
 command OpenSpecTarget call OpenRailsRspecTarget()
 command CopyFileToClipBoard execute "silent !cat % | xclip -selection c" | redraw!
 command CopyFileNameToClipBoard execute "silent ! echo % | tr -d '\\n' | xclip -selection c" | redraw!
@@ -23,6 +24,7 @@ autocmd InsertEnter * match ExtraWhitespace /\s\+\%#\@<!$/
 autocmd InsertLeave * match ExtraWhitespace /\s\+$/
 autocmd BufWinLeave * call clearmatches()
 autocmd BufWinEnter *.md exe SetMdFileSettings()
+nnoremap <leader>rs :RunFileSpec<cr>
 
 "Functions
 function! SetMdFileSettings()
@@ -48,8 +50,12 @@ endfunction
 
 function! SpecFile()
   let current_file = @%
-  let spec_file = substitute(current_file, '^app\/', 'spec/','')
-  let spec_file = substitute(spec_file, '\.rb$', '_spec.rb','')
+  if current_file =~ "_spec.rb"
+    let spec_file = current_file
+  else
+    let spec_file = substitute(current_file, '^app\/', 'spec/','')
+    let spec_file = substitute(spec_file, '\.rb$', '_spec.rb','')
+  end
   return spec_file
 endfunction
 
