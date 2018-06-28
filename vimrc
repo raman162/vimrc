@@ -1,3 +1,4 @@
+let mapleader = " "
 set nu
 set spr
 set expandtab ts=2 sw=2 ai
@@ -19,12 +20,15 @@ command OpenSpecTarget call OpenRailsRspecTarget()
 command CopyFileToClipBoard execute "silent !cat % | xclip -selection c" | redraw!
 command CopyFileNameToClipBoard execute "silent ! echo % | tr -d '\\n' | xclip -selection c" | redraw!
 command GWA norm 1GVGgw
+command ViewChanges w !git diff --no-index -- % -
 autocmd BufWinEnter * match ExtraWhitespace /\s\+$/
 autocmd InsertEnter * match ExtraWhitespace /\s\+\%#\@<!$/
 autocmd InsertLeave * match ExtraWhitespace /\s\+$/
 autocmd BufWinLeave * call clearmatches()
 autocmd BufWinEnter *.md exe SetMdFileSettings()
 nnoremap <leader>rs :RunFileSpec<cr>
+nnoremap <leader>o o<Esc>k
+nnoremap <leader>O O<Esc>j
 
 "Functions
 function! SetMdFileSettings()
