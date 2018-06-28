@@ -27,6 +27,7 @@ autocmd InsertLeave * match ExtraWhitespace /\s\+$/
 autocmd BufWinLeave * call clearmatches()
 autocmd BufWinEnter *.md exe SetMdFileSettings()
 nnoremap <leader>rs :RunFileSpec<cr>
+nnoremap <leader>os :OpenSpec<cr>
 nnoremap <leader>o o<Esc>k
 nnoremap <leader>O O<Esc>j
 
