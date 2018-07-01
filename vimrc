@@ -27,9 +27,11 @@ autocmd InsertLeave * match ExtraWhitespace /\s\+$/
 autocmd BufWinLeave * call clearmatches()
 autocmd BufWinEnter *.md exe SetMdFileSettings()
 nnoremap <leader>rs :RunFileSpec<cr>
-nnoremap <leader>os :OpenSpec<cr>
-nnoremap <leader>o o<Esc>k
-nnoremap <leader>O O<Esc>j
+nnoremap <leader>osf :OpenSpec<cr>
+nnoremap <leader>ost :OpenSpecTarget<cr>
+nnoremap <leader>vc :ViewChanges<cr>
+nnoremap <leader>ob o<Esc>k
+nnoremap <leader>oa O<Esc>j
 
 "Functions
 function! SetMdFileSettings()
@@ -48,7 +50,6 @@ endfunction
 function! RunRailsRspec()
   execute "! bundle exec rspec" SpecFile()
 endfunction
-
 function SpecDir()
   return substitute(SpecFile(), '\(spec.*\)\(\/.*rb$\)', '\1', '')
 endfunction
