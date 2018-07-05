@@ -3,6 +3,8 @@ set nu
 set spr
 set expandtab ts=2 sw=2 ai
 set wildignore+=*/tmp/*,*.so,*.swp,*.zip
+set wildmode=longest,list,full
+set wildmenu
 au BufNewFile,BufRead *.hamlc set ft=haml
 set path=$PWD/**
 filetype plugin on
@@ -50,6 +52,7 @@ endfunction
 function! RunRailsRspec()
   execute "! bundle exec rspec" SpecFile()
 endfunction
+
 function SpecDir()
   return substitute(SpecFile(), '\(spec.*\)\(\/.*rb$\)', '\1', '')
 endfunction
