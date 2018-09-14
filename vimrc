@@ -3,7 +3,6 @@ set nu
 set spr
 set expandtab ts=2 sw=2 ai
 set wildignore+=*/tmp/*,*.so,*.swp,*.zip
-set wildmode=longest,list,full
 set wildmenu
 au BufNewFile,BufRead *.hamlc set ft=haml
 set path=$PWD/**
@@ -19,8 +18,8 @@ command OpenSpec call OpenRailsRspec()
 command RunFileSpec call RunRailsRspec()
 command RunSpec execute "! bundle exec rspec"
 command OpenSpecTarget call OpenRailsRspecTarget()
-command CopyFileToClipBoard execute "silent !cat % | xclip -selection c" | redraw!
-command CopyFileNameToClipBoard execute "silent ! echo % | tr -d '\\n' | xclip -selection c" | redraw!
+command CopyFileToClipBoard normal gg"+yG
+command CopyFileNameToClipBoard execute "let @+=@%"
 command GWA norm 1GVGgw
 command ViewChanges w !git diff --no-index -- % -
 autocmd BufWinEnter * match ExtraWhitespace /\s\+$/
@@ -50,7 +49,7 @@ function! OpenRailsRspec()
 endfunction
 
 function! RunRailsRspec()
-  execute "! bundle exec rspec" SpecFile()
+  execute "bel term bundle exec rspec" SpecFile()
 endfunction
 
 function SpecDir()
