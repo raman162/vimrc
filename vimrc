@@ -4,6 +4,8 @@ set spr
 set expandtab ts=2 sw=2 ai
 set wildignore+=*/tmp/*,*.so,*.swp,*.zip
 set wildmenu
+set exrc
+set secure
 au BufNewFile,BufRead *.hamlc set ft=haml
 set path=$PWD/**
 filetype plugin on
@@ -11,11 +13,14 @@ set statusline+=%F
 highlight ExtraWhitespace ctermbg=red guibg=red
 match ExtraWhitespace /\s\+$/
 command Rmtrailws %s/\s\+$//g
+command Bterm bel term
 command GitCommitPush !git commit -am 'made updates';git push origin master
 command GitPullMaster !git pull origin master
 command PendingTasks call ShowPendingTasks()
 command OpenSpec call OpenRailsRspec()
 command RunFileSpec call RunRailsRspec()
+command RunFileSpecFailure call RunRailsRspecFailure()
+command RunLineSpec call RunRailsRpecLine()
 command RunSpec execute "! bundle exec rspec"
 command OpenSpecTarget call OpenRailsRspecTarget()
 command CopyFileToClipBoard normal gg"+yG
@@ -28,6 +33,8 @@ autocmd InsertLeave * match ExtraWhitespace /\s\+$/
 autocmd BufWinLeave * call clearmatches()
 autocmd BufWinEnter *.md exe SetMdFileSettings()
 nnoremap <leader>rs :RunFileSpec<cr>
+nnoremap <leader>rl :RunLineSpec<cr>
+nnoremap <leader>rf :RunFileSpecFailure<cr>
 nnoremap <leader>osf :OpenSpec<cr>
 nnoremap <leader>ost :OpenSpecTarget<cr>
 nnoremap <leader>vc :ViewChanges<cr>
@@ -50,6 +57,15 @@ endfunction
 
 function! RunRailsRspec()
   execute "bel term bundle exec rspec" SpecFile()
+endfunction
+
+function! RunRailsRspecFailure()
+  execute "bel term bundle exec rspec" SpecFile() "--only-failures"
+endfunction
+
+function! RunRailsRpecLine()
+  let spec = SpecFile() . ":" . line(".")
+  execute "bel term bundle exec rspec" spec
 endfunction
 
 function SpecDir()
