@@ -1,4 +1,7 @@
 let mapleader = " "
+let g:netrw_banner = 0
+let g:netrw_liststyle = 3
+let g:netrw_winsize = 25
 set nu
 set spr
 set expandtab ts=2 sw=2 ai
@@ -20,8 +23,9 @@ command PendingTasks call ShowPendingTasks()
 command OpenSpec call OpenRailsRspec()
 command RunFileSpec call RunRailsRspec()
 command RunFileSpecFailure call RunRailsRspecFailure()
-command RunLineSpec call RunRailsRpecLine()
+command RunNearSpec call RunNearSpec()
 command RunSpec execute "! bundle exec rspec"
+command RunAllSpecs call RunAllSpecs()
 command OpenSpecTarget call OpenRailsRspecTarget()
 command CopyFileToClipBoard normal gg"+yG
 command CopyFileNameToClipBoard execute "let @+=@%"
@@ -33,7 +37,9 @@ autocmd InsertLeave * match ExtraWhitespace /\s\+$/
 autocmd BufWinLeave * call clearmatches()
 autocmd BufWinEnter *.md exe SetMdFileSettings()
 nnoremap <leader>rs :RunFileSpec<cr>
-nnoremap <leader>rl :RunLineSpec<cr>
+nnoremap <leader>ras :RunAllSpecs<cr>
+nnoremap <leader>raf :RunAllSpecs<cr>
+nnoremap <leader>rn :RunNearSpec<cr>
 nnoremap <leader>rf :RunFileSpecFailure<cr>
 nnoremap <leader>osf :OpenSpec<cr>
 nnoremap <leader>ost :OpenSpecTarget<cr>
@@ -55,6 +61,14 @@ function! OpenRailsRspec()
   execute "redraw!"
 endfunction
 
+function! RunAllSpecs()
+  execute "bel term bundle exec rspec"
+endfunction
+
+function! RunAllFailures()
+  execute "bel term bundle exec rspec --only-failures"
+endfunction
+
 function! RunRailsRspec()
   execute "bel term bundle exec rspec" SpecFile()
 endfunction
@@ -63,9 +77,9 @@ function! RunRailsRspecFailure()
   execute "bel term bundle exec rspec" SpecFile() "--only-failures"
 endfunction
 
-function! RunRailsRpecLine()
-  let spec = SpecFile() . ":" . line(".")
-  execute "bel term bundle exec rspec" spec
+function! RunNearSpec()
+  let near_spec = SpecFile() . ":" . line(".")
+  execute "bel term bundle exec rspec" near_spec
 endfunction
 
 function SpecDir()
