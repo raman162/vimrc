@@ -3,6 +3,7 @@ let g:netrw_banner = 0
 let g:netrw_liststyle = 3
 let g:netrw_winsize = 25
 set nu
+set rnu
 set spr
 set expandtab ts=2 sw=2 ai
 set wildignore+=*/tmp/*,*.so,*.swp,*.zip
@@ -26,6 +27,7 @@ command RunFileSpecFailure call RunRailsRspecFailure()
 command RunNearSpec call RunNearSpec()
 command RunSpec execute "! bundle exec rspec"
 command RunAllSpecs call RunAllSpecs()
+command RunAllFailures call RunAllFailures()
 command OpenSpecTarget call OpenRailsRspecTarget()
 command CopyFileToClipBoard normal gg"+yG
 command CopyFileNameToClipBoard execute "let @+=@%"
@@ -38,7 +40,7 @@ autocmd BufWinLeave * call clearmatches()
 autocmd BufWinEnter *.md exe SetMdFileSettings()
 nnoremap <leader>rs :RunFileSpec<cr>
 nnoremap <leader>ras :RunAllSpecs<cr>
-nnoremap <leader>raf :RunAllSpecs<cr>
+nnoremap <leader>raf :RunAllFailures<cr>
 nnoremap <leader>rn :RunNearSpec<cr>
 nnoremap <leader>rf :RunFileSpecFailure<cr>
 nnoremap <leader>osf :OpenSpec<cr>
