@@ -16,23 +16,23 @@ filetype plugin on
 set statusline+=%F
 highlight ExtraWhitespace ctermbg=red guibg=red
 match ExtraWhitespace /\s\+$/
-command Rmtrailws %s/\s\+$//g
-command Bterm bel term
-command GitCommitPush !git commit -am 'made updates';git push origin master
-command GitPullMaster !git pull origin master
-command PendingTasks call ShowPendingTasks()
-command OpenSpec call OpenRailsRspec()
-command RunFileSpec call RunRailsRspec()
-command RunFileSpecFailure call RunRailsRspecFailure()
-command RunNearSpec call RunNearSpec()
-command RunSpec execute "! bundle exec rspec"
-command RunAllSpecs call RunAllSpecs()
-command RunAllFailures call RunAllFailures()
-command OpenSpecTarget call OpenRailsRspecTarget()
-command CopyFileToClipBoard normal gg"+yG
-command CopyFileNameToClipBoard execute "let @+=@%"
-command GWA norm 1GVGgw
-command ViewChanges w !git diff --no-index -- % -
+command!Rmtrailws %s/\s\+$//g
+command!Bterm bel term
+command!GitCommitPush !git commit -am 'made updates';git push origin master
+command!GitPullMaster !git pull origin master
+command!PendingTasks call ShowPendingTasks()
+command!OpenSpec call OpenRailsRspec()
+command!RunFileSpec call RunRailsRspec()
+command!RunFileSpecFailure call RunRailsRspecFailure()
+command!RunNearSpec call RunNearSpec()
+command!RunSpec execute "! bundle exec rspec"
+command!RunAllSpecs call RunAllSpecs()
+command!RunAllFailures call RunAllFailures()
+command!OpenSpecTarget call OpenRailsRspecTarget()
+command!CopyFileToClipBoard normal gg"+yG
+command!CopyFileNameToClipBoard execute "let @+=@%"
+command!GWA norm 1GVGgw
+command!ViewChanges w !git diff --no-index -- % -
 autocmd BufWinEnter * match ExtraWhitespace /\s\+$/
 autocmd InsertEnter * match ExtraWhitespace /\s\+\%#\@<!$/
 autocmd InsertLeave * match ExtraWhitespace /\s\+$/
@@ -84,7 +84,7 @@ function! RunNearSpec()
   execute "bel term bundle exec rspec" near_spec
 endfunction
 
-function SpecDir()
+function! SpecDir()
   return substitute(SpecFile(), '\(spec.*\)\(\/.*rb$\)', '\1', '')
 endfunction
 
