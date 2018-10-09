@@ -12,10 +12,13 @@ set exrc
 set secure
 set background=dark
 set t_Co=256
+set cc=80
+set laststatus=2
+set statusline=[%n]-%F:%c:%l\ %m
+hi ColorColumn ctermbg=8
 au BufNewFile,BufRead *.hamlc set ft=haml
 set path=$PWD/**
 filetype plugin on
-set statusline+=%F
 highlight ExtraWhitespace ctermbg=red guibg=red
 match ExtraWhitespace /\s\+$/
 command!Rmtrailws %s/\s\+$//g
