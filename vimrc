@@ -10,6 +10,8 @@ set wildignore+=*/tmp/*,*.so,*.swp,*.zip
 set wildmenu
 set exrc
 set secure
+set background=dark
+set t_Co=256
 au BufNewFile,BufRead *.hamlc set ft=haml
 set path=$PWD/**
 filetype plugin on
@@ -119,3 +121,64 @@ function! ShowPendingTasks()
   execute "set syntax=" .current_file_type
   execute "resize 20"
 endfunction
+
+"##########################################
+" CSCOPE Settings
+"##########################################
+" add any cscope database in current directory
+if filereadable("cscope.out")
+    cs add cscope.out
+" else add the database pointed to by environment variable
+elseif $CSCOPE_DB != ""
+    cs add $CSCOPE_DB
+endif" show msg when any other cscope db added
+
+set cscopeverbose
+
+" To do the first type of search, hit 'CTRL-\', followed by one of the
+" cscope search types above (s,g,c,t,e,f,i,d).  The result of your cscope
+" search will be displayed in the current window.  You can use CTRL-T to
+" go back to where you were before the search.
+"
+nnoremap <C-\>s :cs find s <C-R>=expand("<cword>")<CR><CR>
+nnoremap <C-\>g :cs find g <C-R>=expand("<cword>")<CR><CR>
+nnoremap <C-\>c :cs find c <C-R>=expand("<cword>")<CR><CR>
+nnoremap <C-\>t :cs find t <C-R>=expand("<cword>")<CR><CR>
+nnoremap <C-\>e :cs find e <C-R>=expand("<cword>")<CR><CR>
+nnoremap <C-\>f :cs find f <C-R>=expand("<cfile>")<CR><CR>
+nnoremap <C-\>i :cs find i ^<C-R>=expand("<cfile>")<CR>$<CR>
+nnoremap <C-\>d :cs find d <C-R>=expand("<cword>")<CR><CR>
+
+" Using 'CTRL-spacebar' (intepreted as CTRL-@ by vim) then a search type
+" makes the vim window split horizontally, with search result displayed in
+" the new window.
+"
+" (Note: earlier versions of vim may not have the :scs command, but it
+" can be simulated roughly via:
+"    nnoremap <C-@>s <C-W><C-S> :cs find s <C-R>=expand("<cword>")<CR><CR>
+
+nnoremap <C-@>s :scs find s <C-R>=expand("<cword>")<CR><CR>
+nnoremap <C-@>g :scs find g <C-R>=expand("<cword>")<CR><CR>
+nnoremap <C-@>c :scs find c <C-R>=expand("<cword>")<CR><CR>
+nnoremap <C-@>t :scs find t <C-R>=expand("<cword>")<CR><CR>
+nnoremap <C-@>e :scs find e <C-R>=expand("<cword>")<CR><CR>
+nnoremap <C-@>f :scs find f <C-R>=expand("<cfile>")<CR><CR>
+nnoremap <C-@>i :scs find i ^<C-R>=expand("<cfile>")<CR>$<CR>
+nnoremap <C-@>d :scs find d <C-R>=expand("<cword>")<CR><CR>
+
+
+" Hitting CTRL-space *twice* before the search type does a vertical
+" split instead of a horizontal one (vim 6 and up only)
+"
+" (Note: you may wish to put a 'set splitright' in your .vimrc
+" if you prefer the new window on the right instead of the left
+
+nnoremap <C-@><C-@>s :vert scs find s <C-R>=expand("<cword>")<CR><CR>
+nnoremap <C-@><C-@>g :vert scs find g <C-R>=expand("<cword>")<CR><CR>
+nnoremap <C-@><C-@>c :vert scs find c <C-R>=expand("<cword>")<CR><CR>
+nnoremap <C-@><C-@>t :vert scs find t <C-R>=expand("<cword>")<CR><CR>
+nnoremap <C-@><C-@>e :vert scs find e <C-R>=expand("<cword>")<CR><CR>
+nnoremap <C-@><C-@>f :vert scs find f <C-R>=expand("<cfile>")<CR><CR>
+nnoremap <C-@><C-@>i :vert scs find i ^<C-R>=expand("<cfile>")<CR>$<CR>
+nnoremap <C-@><C-@>d :vert scs find d <C-R>=expand("<cword>")<CR><CR>
+"##########################################
