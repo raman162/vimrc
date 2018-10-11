@@ -33,6 +33,7 @@ command!RunNearSpec call RunNearSpec()
 command!RunSpec execute "! bundle exec rspec"
 command!RunAllSpecs call RunAllSpecs()
 command!RunAllFailures call RunAllFailures()
+command!RunLastSpecCommand call RunLastSpecCommand()
 command!OpenSpecTarget call OpenRailsRspecTarget()
 command!CopyFileToClipBoard normal gg"+yG
 command!CopyFileNameToClipBoard execute "let @+=@%"
@@ -44,6 +45,7 @@ autocmd InsertLeave * match ExtraWhitespace /\s\+$/
 autocmd BufWinLeave * call clearmatches()
 autocmd BufWinEnter *.md exe SetMdFileSettings()
 nnoremap <leader>rs :RunFileSpec<cr>
+nnoremap <leader>rl :RunLastSpecCommand<cr>
 nnoremap <leader>ras :RunAllSpecs<cr>
 nnoremap <leader>raf :RunAllFailures<cr>
 nnoremap <leader>rn :RunNearSpec<cr>
@@ -57,22 +59,22 @@ nnoremap <leader>oa O<Esc>j
 "INSERT MODE MAPPINGS
 
 "Quickly insert ruby method
-inoremap <C-I>f def<cr>end<Esc>kA<space>
-inoremap <C-I>c class<cr>end<Esc>kA<space>
-inoremap <C-I>m module<cr>end<Esc>kA<space>
-inoremap <C-I>b <space>do<cr>end<Esc>kA<space>\|\|<Esc>i
+inoremap <C-A>f def<cr>end<Esc>kA<space>
+inoremap <C-A>c class<cr>end<Esc>kA<space>
+inoremap <C-A>m module<cr>end<Esc>kA<space>
+inoremap <C-A>b <space>do<cr>end<Esc>kA
 
 "Quick handy mappings for inserting things that commonly close
-inoremap <C-I>( ()<Esc>i
-inoremap <C-I>{ {}<Esc>i
-inoremap <C-I>[ []<Esc>i
-inoremap <C-I>< <><Esc>i
-inoremap <C-I>\| \|\|<Esc>i
-inoremap <C-I>` ``<Esc>i
-inoremap <C-I>' ''<Esc>i
-inoremap <C-I>" ""<Esc>i
-inoremap <C-I>* **<Esc>i
-inoremap <C-I>_ __<Esc>i
+inoremap <C-A>( ()<Esc>i
+inoremap <C-A>{ {}<Esc>i
+inoremap <C-A>[ []<Esc>i
+inoremap <C-A>< <><Esc>i
+inoremap <C-A>\| \|\|<Esc>i
+inoremap <C-A>` ``<Esc>i
+inoremap <C-A>' ''<Esc>i
+inoremap <C-A>" ""<Esc>i
+inoremap <C-A>* **<Esc>i
+inoremap <C-A>_ __<Esc>i
 
 "Functions
 function! SetMdFileSettings()
@@ -88,25 +90,43 @@ function! OpenRailsRspec()
   execute "redraw!"
 endfunction
 
+function! RunLastSpecCommand()
+  execute g:last_spec_command
+endfunction
+
+function! ExecuteSpecCommmand(command)
+  call SetLastSpecCommand(a:command)
+  execute a:command
+endfunction
+
+function! SetLastSpecCommand(command)
+  let g:last_spec_command = a:command
+endfunction
+
 function! RunAllSpecs()
-  execute "bel term bundle exec rspec"
+  let command =  "bel term bundle exec rspec"
+  call ExecuteSpecCommmand(command)
 endfunction
 
 function! RunAllFailures()
-  execute "bel term bundle exec rspec --only-failures"
+  let command = "bel term bundle exec rspec --only-failures"
+  call ExecuteSpecCommmand(command)
 endfunction
 
 function! RunRailsRspec()
-  execute "bel term bundle exec rspec" SpecFile()
+  let command = "bel term bundle exec rspec " . SpecFile()
+  call ExecuteSpecCommmand(command)
 endfunction
 
 function! RunRailsRspecFailure()
-  execute "bel term bundle exec rspec" SpecFile() "--only-failures"
+  let command = "bel term bundle exec rspec " . SpecFile() . " --only-failures"
+  call ExecuteSpecCommmand(command)
 endfunction
 
 function! RunNearSpec()
   let near_spec = SpecFile() . ":" . line(".")
-  execute "bel term bundle exec rspec" near_spec
+  let command = "bel term bundle exec rspec " . near_spec
+  call ExecuteSpecCommmand(command)
 endfunction
 
 function! SpecDir()
