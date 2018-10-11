@@ -53,7 +53,23 @@ nnoremap <leader>ost :OpenSpecTarget<cr>
 nnoremap <leader>vc :ViewChanges<cr>
 nnoremap <leader>ob o<Esc>k
 nnoremap <leader>oa O<Esc>j
+
+"INSERT MODE MAPPINGS
+
+"Quickly insert ruby method
 inoremap <C-I>f def<cr>end<Esc>kA<space>
+inoremap <C-I>c class<cr>end<Esc>kA<space>
+inoremap <C-I>m module<cr>end<Esc>kA<space>
+inoremap <C-I>b <space>do<cr>end<Esc>kA<space>\|\|<Esc>i
+
+"Quick handy mappings for inserting things that commonly close
+inoremap <C-I>( ()<Esc>i
+inoremap <C-I>{ {}<Esc>i
+inoremap <C-I>< <><Esc>i
+inoremap <C-I>\| \|\|<Esc>i
+inoremap <C-I>` ``<Esc>i
+inoremap <C-I>' ''<Esc>i
+inoremap <C-I>" ""<Esc>i
 
 "Functions
 function! SetMdFileSettings()
