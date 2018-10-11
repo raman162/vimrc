@@ -70,6 +70,8 @@ inoremap <C-I>\| \|\|<Esc>i
 inoremap <C-I>` ``<Esc>i
 inoremap <C-I>' ''<Esc>i
 inoremap <C-I>" ""<Esc>i
+inoremap <C-I>* **<Esc>i
+inoremap <C-I>_ __<Esc>i
 
 "Functions
 function! SetMdFileSettings()
