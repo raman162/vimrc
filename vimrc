@@ -65,6 +65,7 @@ inoremap <C-I>b <space>do<cr>end<Esc>kA<space>\|\|<Esc>i
 "Quick handy mappings for inserting things that commonly close
 inoremap <C-I>( ()<Esc>i
 inoremap <C-I>{ {}<Esc>i
+inoremap <C-I>[ []<Esc>i
 inoremap <C-I>< <><Esc>i
 inoremap <C-I>\| \|\|<Esc>i
 inoremap <C-I>` ``<Esc>i
