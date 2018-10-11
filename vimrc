@@ -53,6 +53,7 @@ nnoremap <leader>ost :OpenSpecTarget<cr>
 nnoremap <leader>vc :ViewChanges<cr>
 nnoremap <leader>ob o<Esc>k
 nnoremap <leader>oa O<Esc>j
+inoremap <C-I>f def<cr>end<Esc>kA<space>
 
 "Functions
 function! SetMdFileSettings()
