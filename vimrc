@@ -59,22 +59,24 @@ nnoremap <leader>oa O<Esc>j
 "INSERT MODE MAPPINGS
 
 "Quickly insert ruby method
-inoremap <C-A>f def<cr>end<Esc>kA<space>
-inoremap <C-A>c class<cr>end<Esc>kA<space>
-inoremap <C-A>m module<cr>end<Esc>kA<space>
-inoremap <C-A>b <space>do<cr>end<Esc>kA
+inoremap <C-@>f def<cr>end<Esc>kA<space>
+inoremap <C-@>c class<cr>end<Esc>kA<space>
+inoremap <C-@>m module<cr>end<Esc>kA<space>
+inoremap <C-@>b <space>do<cr>end<Esc>kA
 
 "Quick handy mappings for inserting things that commonly close
-inoremap <C-A>( ()<Esc>i
-inoremap <C-A>{ {}<Esc>i
-inoremap <C-A>[ []<Esc>i
-inoremap <C-A>< <><Esc>i
-inoremap <C-A>\| \|\|<Esc>i
-inoremap <C-A>` ``<Esc>i
-inoremap <C-A>' ''<Esc>i
-inoremap <C-A>" ""<Esc>i
-inoremap <C-A>* **<Esc>i
-inoremap <C-A>_ __<Esc>i
+inoremap <C-@>( ()<Esc>i
+inoremap <C-@>{ {}<Esc>i
+inoremap <C-@>[ []<Esc>i
+inoremap <C-@>< <><Esc>i
+inoremap <C-@>\| \|\|<Esc>i
+inoremap <C-@>` ``<Esc>i
+inoremap <C-@>' ''<Esc>i
+inoremap <C-@>" ""<Esc>i
+inoremap <C-@>* **<Esc>i
+inoremap <C-@>_ __<Esc>i
+
+
 
 "Functions
 function! SetMdFileSettings()
