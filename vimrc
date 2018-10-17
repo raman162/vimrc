@@ -2,6 +2,7 @@ let mapleader = " "
 let g:netrw_banner = 0
 let g:netrw_liststyle = 3
 let g:netrw_winsize = 25
+
 set nu
 set rnu
 set spr
@@ -15,12 +16,18 @@ set t_Co=256
 set cc=80
 set laststatus=2
 set statusline=[%n]-%F:%l:%c\ %m
+set path=$PWD/**
+
+runtime  macros/matchit.vim
+
 hi ColorColumn ctermbg=8
 au BufNewFile,BufRead *.hamlc set ft=haml
-set path=$PWD/**
+
 filetype plugin on
 highlight ExtraWhitespace ctermbg=red guibg=red
+
 match ExtraWhitespace /\s\+$/
+
 command!Rmtrailws %s/\s\+$//g
 command!Bterm bel term
 command!GitCommitPush !git commit -am 'made updates';git push origin master
@@ -59,7 +66,7 @@ nnoremap <leader>oa O<Esc>j
 "INSERT MODE MAPPINGS
 
 "Quickly insert ruby method
-inoremap <C-@>f def<cr>end<Esc>kA<space>
+inoremap <C-@>d def<cr>end<Esc>kA<space>
 inoremap <C-@>c class<cr>end<Esc>kA<space>
 inoremap <C-@>m module<cr>end<Esc>kA<space>
 inoremap <C-@>b <space>do<cr>end<Esc>kA
