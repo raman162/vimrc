@@ -17,6 +17,14 @@ set cc=80
 set laststatus=2
 set statusline=[%n]-%F:%l:%c\ %m
 set path=$PWD/**
+set nocompatible
+filetype off
+set rtp+=~/.vim/bundle/vundle/
+call vundle#begin()
+  Plugin 'VundleVim/Vundle.vim'
+  Plugin 'elixir-editors/vim-elixir'
+call vundle#end()
+filetype plugin indent on
 
 runtime  macros/matchit.vim
 
