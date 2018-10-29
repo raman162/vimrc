@@ -54,6 +54,7 @@ command!CopyFileToClipBoard normal gg"+yG
 command!CopyFileNameToClipBoard execute "let @+=@%"
 command!GWA norm 1GVGgw
 command!ViewChanges w !git diff --no-index -- % -
+command!MaxWindow call MaxWindow()
 autocmd BufWinEnter * match ExtraWhitespace /\s\+$/
 autocmd InsertEnter * match ExtraWhitespace /\s\+\%#\@<!$/
 autocmd InsertLeave * match ExtraWhitespace /\s\+$/
@@ -70,6 +71,7 @@ nnoremap <leader>ost :OpenSpecTarget<cr>
 nnoremap <leader>vc :ViewChanges<cr>
 nnoremap <leader>ob o<Esc>k
 nnoremap <leader>oa O<Esc>j
+nnoremap <C-W>m :MaxWindow<cr>
 
 "INSERT MODE MAPPINGS
 
@@ -94,6 +96,10 @@ inoremap <C-@>_ __<Esc>i
 
 
 "Functions
+function! MaxWindow()
+  normal! _|
+endfunction
+
 function! SetMdFileSettings()
   setl textwidth=80
   setl spell
