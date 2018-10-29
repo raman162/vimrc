@@ -24,8 +24,6 @@ call vundle#begin()
   Plugin 'VundleVim/Vundle.vim'
   Plugin 'elixir-editors/vim-elixir'
 call vundle#end()
-filetype plugin indent on
-
 runtime  macros/matchit.vim
 
 hi ColorColumn ctermbg=8
