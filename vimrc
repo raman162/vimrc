@@ -55,6 +55,7 @@ command!CopyFileNameToClipBoard execute "let @+=@%"
 command!GWA norm 1GVGgw
 command!ViewChanges w !git diff --no-index -- % -
 command!MaxWindow call MaxWindow()
+command!ResizeToHeight call ResizeToHeight()
 autocmd BufWinEnter * match ExtraWhitespace /\s\+$/
 autocmd InsertEnter * match ExtraWhitespace /\s\+\%#\@<!$/
 autocmd InsertLeave * match ExtraWhitespace /\s\+$/
@@ -72,6 +73,7 @@ nnoremap <leader>vc :ViewChanges<cr>
 nnoremap <leader>ob o<Esc>k
 nnoremap <leader>oa O<Esc>j
 nnoremap <C-W>m :MaxWindow<cr>
+nnoremap <leader>rh :ResizeToHeight<cr>
 
 "INSERT MODE MAPPINGS
 
@@ -81,23 +83,15 @@ inoremap <C-@>c class<cr>end<Esc>kA<space>
 inoremap <C-@>m module<cr>end<Esc>kA<space>
 inoremap <C-@>b <space>do<cr>end<Esc>kA
 
-"Quick handy mappings for inserting things that commonly close
-inoremap <C-@>( ()<Esc>i
-inoremap <C-@>{ {}<Esc>i
-inoremap <C-@>[ []<Esc>i
-inoremap <C-@>< <><Esc>i
-inoremap <C-@>\| \|\|<Esc>i
-inoremap <C-@>` ``<Esc>i
-inoremap <C-@>' ''<Esc>i
-inoremap <C-@>" ""<Esc>i
-inoremap <C-@>* **<Esc>i
-inoremap <C-@>_ __<Esc>i
-
-
-
 "Functions
 function! MaxWindow()
   normal! _|
+endfunction
+
+function! ResizeToHeight()
+  let window_height = line('$')
+  execute 'resize' window_height
+  setl wfh
 endfunction
 
 function! SetMdFileSettings()
