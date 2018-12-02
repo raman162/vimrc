@@ -43,7 +43,6 @@ command!OpenSpec call OpenRailsRspec()
 command!RunFileSpec call RunRailsRspec()
 command!RunFileSpecFailure call RunRailsRspecFailure()
 command!RunNearSpec call RunNearSpec()
-command!RunSpec execute "! bundle exec rspec"
 command!RunAllSpecs call RunAllSpecs()
 command!RunAllFailures call RunAllFailures()
 command!RunLastSpecCommand call RunLastSpecCommand()
@@ -119,28 +118,33 @@ function! SetLastSpecCommand(command)
 endfunction
 
 function! RunAllSpecs()
-  let command =  "bel term bundle exec rspec"
+  let command =  "bel term " . RspecCommand()
   call ExecuteSpecCommmand(command)
 endfunction
 
 function! RunAllFailures()
-  let command = "bel term bundle exec rspec --only-failures"
+  let command = "bel term " . RspecCommand() . " --only-failures"
   call ExecuteSpecCommmand(command)
 endfunction
 
 function! RunRailsRspec()
-  let command = "bel term bundle exec rspec " . SpecFile()
+  let command = "bel term " . RspecCommand() . " " . SpecFile()
   call ExecuteSpecCommmand(command)
 endfunction
 
+function! RspecCommand()
+  let g:rspec_command = get(g:, 'rspec_command', "bundle exec rspec")
+  return g:rspec_command
+endfunction
+
 function! RunRailsRspecFailure()
-  let command = "bel term bundle exec rspec " . SpecFile() . " --only-failures"
+  let command = "bel term " . RspecCommand() . " " . SpecFile() . " --only-failures"
   call ExecuteSpecCommmand(command)
 endfunction
 
 function! RunNearSpec()
   let near_spec = SpecFile() . ":" . line(".")
-  let command = "bel term bundle exec rspec " . near_spec
+  let command = "bel term " . RspecCommand() . near_spec
   call ExecuteSpecCommmand(command)
 endfunction
 
