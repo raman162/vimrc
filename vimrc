@@ -144,7 +144,7 @@ endfunction
 
 function! RunNearSpec()
   let near_spec = SpecFile() . ":" . line(".")
-  let command = "bel term " . RspecCommand() . near_spec
+  let command = "bel term " . RspecCommand() . " " . near_spec
   call ExecuteSpecCommmand(command)
 endfunction
 
