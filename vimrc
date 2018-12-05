@@ -51,7 +51,7 @@ command!GWA norm 1GVGgw
 command!ViewChanges w !git diff --no-index -- % -
 command!MaxWindow call MaxWindow()
 command!ResizeToHeight call ResizeToHeight()
-command!GitDiff call GitDiff()
+command! -nargs=? GitDiff call GitDiff(<f-args>)
 autocmd BufWinEnter * match ExtraWhitespace /\s\+$/
 autocmd InsertEnter * match ExtraWhitespace /\s\+\%#\@<!$/
 autocmd InsertLeave * match ExtraWhitespace /\s\+$/
@@ -184,11 +184,12 @@ function! ShowPendingTasks()
   execute "resize 20"
 endfunction
 
-function! GitDiff()
+function! GitDiff(...)
   let target_file_type=&ft
   let target_file=@%
+  let object = get(a:, 1, 'HEAD')
   execute 'diffthis'
-  execute 'vne | 0read !git show HEAD:' . expand(target_file)
+  execute 'vne | 0read !git show ' . expand(object) . ':' . expand(target_file)
   execute 'set filetype=' . expand(target_file_type)
   execute 'diffthis'
   call MakeBufferScratch()
