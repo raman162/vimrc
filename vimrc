@@ -36,8 +36,6 @@ match ExtraWhitespace /\s\+$/
 
 command!Rmtrailws %s/\s\+$//g
 command!Bterm bel term
-command!GitCommitPush !git commit -am 'made updates';git push origin master
-command!GitPullMaster !git pull origin master
 command!PendingTasks call ShowPendingTasks()
 command!OpenSpec call OpenRailsRspec()
 command!RunFileSpec call RunRailsRspec()
@@ -53,6 +51,7 @@ command!GWA norm 1GVGgw
 command!ViewChanges w !git diff --no-index -- % -
 command!MaxWindow call MaxWindow()
 command!ResizeToHeight call ResizeToHeight()
+command!GitDiff call GitDiff()
 autocmd BufWinEnter * match ExtraWhitespace /\s\+$/
 autocmd InsertEnter * match ExtraWhitespace /\s\+\%#\@<!$/
 autocmd InsertLeave * match ExtraWhitespace /\s\+$/
@@ -71,6 +70,7 @@ nnoremap <leader>ob o<Esc>k
 nnoremap <leader>oa O<Esc>j
 nnoremap <C-W>m :MaxWindow<cr>
 nnoremap <leader>rh :ResizeToHeight<cr>
+nnoremap <leader>gd :GitDiff<cr>
 
 "INSERT MODE MAPPINGS
 
@@ -182,6 +182,23 @@ function! ShowPendingTasks()
   execute "1d"
   execute "set syntax=" .current_file_type
   execute "resize 20"
+endfunction
+
+function! GitDiff()
+  let target_file_type=&ft
+  let target_file=@%
+  execute 'diffthis'
+  execute 'vne | 0read !git show HEAD:' . expand(target_file)
+  execute 'set filetype=' . expand(target_file_type)
+  execute 'diffthis'
+  call MakeBufferScratch()
+  execute "normal! \<C-W>r"
+endfunction
+
+function! MakeBufferScratch()
+  execute 'setlocal buftype=nofile'
+  execute 'setlocal bufhidden=hide'
+  execute 'setlocal noswapfile'
 endfunction
 
 "##########################################
