@@ -1,3 +1,5 @@
+"" vim:fdm=marker
+
 let mapleader = " "
 let g:netrw_banner = 0
 let g:netrw_liststyle = 3
@@ -18,6 +20,7 @@ set laststatus=2
 set statusline=[%n]-%F:%l:%c\ %m
 set path=$PWD/**
 set nocompatible
+
 filetype off
 set rtp+=~/.vim/bundle/vundle/
 call vundle#begin()
@@ -34,6 +37,11 @@ highlight ExtraWhitespace ctermbg=red guibg=red
 
 match ExtraWhitespace /\s\+$/
 
+if &diff
+  colorscheme industry
+endif
+
+""---Commands
 command!Rmtrailws %s/\s\+$//g
 command!Bterm bel term
 command!PendingTasks call ShowPendingTasks()
@@ -52,11 +60,18 @@ command!ViewChanges w !git diff --no-index -- % -
 command!MaxWindow call MaxWindow()
 command!ResizeToHeight call ResizeToHeight()
 command! -nargs=? GitDiff call GitDiff(<f-args>)
+command!GitAdd call GitAdd()
+command!GitLog -nargs=? call GitLog(<f-args>)
+command!GitShow -nargs=? call GitShow(<f-args>)
+
+""--AutoCommands
 autocmd BufWinEnter * match ExtraWhitespace /\s\+$/
 autocmd InsertEnter * match ExtraWhitespace /\s\+\%#\@<!$/
 autocmd InsertLeave * match ExtraWhitespace /\s\+$/
 autocmd BufWinLeave * call clearmatches()
 autocmd BufWinEnter *.md exe SetMdFileSettings()
+
+""---Normal mode mappings
 nnoremap <leader>rs :RunFileSpec<cr>
 nnoremap <leader>rl :RunLastSpecCommand<cr>
 nnoremap <leader>ras :RunAllSpecs<cr>
@@ -71,8 +86,11 @@ nnoremap <leader>oa O<Esc>j
 nnoremap <C-W>m :MaxWindow<cr>
 nnoremap <leader>rh :ResizeToHeight<cr>
 nnoremap <leader>gd :GitDiff<cr>
+nnoremap <leader>ga :GitAdd<cr>
+nnoremap <leader>gs :GitShow<cr>
+nnoremap <leader>gl :GitLog<cr>
 
-"INSERT MODE MAPPINGS
+""---Insert mode mappings
 
 "Quickly insert ruby method
 inoremap <C-@>d def<cr>end<Esc>kA<space>
@@ -80,7 +98,7 @@ inoremap <C-@>c class<cr>end<Esc>kA<space>
 inoremap <C-@>m module<cr>end<Esc>kA<space>
 inoremap <C-@>b <space>do<cr>end<Esc>kA
 
-"Functions
+""---Functions
 function! MaxWindow()
   normal! _|
 endfunction
@@ -174,6 +192,17 @@ function! OpenRailsRspecTarget()
   execute "redraw!"
 endfunction
 
+function! SpecFileExist()
+  let spec_file = SpecFile()
+  if filereadable(expand(spec_file))
+    echo expand(spec_file).' exists'
+  else
+    echohl ErrorMsg
+    echo 'WARNING: '.expand(spec_file).' does not exist'
+    echohl None
+  endif
+endfunction
+
 function! ShowPendingTasks()
   let current_file_type = &ft
   let current_file = @%
@@ -196,12 +225,30 @@ function! GitDiff(...)
   execute "normal! \<C-W>r"
 endfunction
 
+function! GitLog(...)
+  let target_file = get(a:,1, @%)
+  execute 'vne | 0read !git log ' .expand(target_file)
+  call MakeBufferScratch()
+endfunction
+
+function! GitShow(...)
+  let object = get(a:, 1, 'HEAD')
+  execute 'vne | 0read !git show ' .expand(object)
+  call MakeBufferScratch()
+endfunction
+
+function! GitAdd(...)
+  let target_file=@%
+  let job = job_start('git add ' . expand(target_file))
+endfunction
+
 function! MakeBufferScratch()
   execute 'setlocal buftype=nofile'
   execute 'setlocal bufhidden=hide'
   execute 'setlocal noswapfile'
 endfunction
 
+""--- CSCOPE
 "##########################################
 " CSCOPE Settings
 "##########################################
