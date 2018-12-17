@@ -53,6 +53,7 @@ command!RunAllSpecs call RunAllSpecs()
 command!RunAllFailures call RunAllFailures()
 command!RunLastSpecCommand call RunLastSpecCommand()
 command!OpenSpecTarget call OpenRailsRspecTarget()
+command!SpecFileExist call SpecFileExist()
 command!CopyFileToClipBoard normal gg"+yG
 command!CopyFileNameToClipBoard execute "let @+=@%"
 command!GWA norm 1GVGgw
