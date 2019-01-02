@@ -64,6 +64,7 @@ command! -nargs=? GitDiff call GitDiff(<f-args>)
 command!GitAdd call GitAdd()
 command!GitLog -nargs=? call GitLog(<f-args>)
 command!GitShow -nargs=? call GitShow(<f-args>)
+command!FormatJSON call FormatJSON()
 
 ""--AutoCommands
 autocmd BufWinEnter * match ExtraWhitespace /\s\+$/
@@ -91,6 +92,9 @@ nnoremap <leader>ga :GitAdd<cr>
 nnoremap <leader>gs :GitShow<cr>
 nnoremap <leader>gl :GitLog<cr>
 
+""---Text Object Mappings
+onoremap <silent> i\| :<C-u> call SelectInnerPipe()<cr>
+onoremap <silent> a\| :<C-u> call SelectAroundPipe()<cr>
 ""---Insert mode mappings
 
 "Quickly insert ruby method
@@ -247,6 +251,19 @@ function! MakeBufferScratch()
   execute 'setlocal buftype=nofile'
   execute 'setlocal bufhidden=hide'
   execute 'setlocal noswapfile'
+endfunction
+
+function! FormatJSON()
+  let target_file=@%
+  execute '%!python -m json.tool'
+endfunction
+
+function! SelectInnerPipe()
+  execute "normal! ^f|lvt|"
+endfunction
+
+function! SelectAroundPipe()
+  execute "normal! ^f|vf|"
 endfunction
 
 ""--- CSCOPE
