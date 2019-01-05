@@ -46,6 +46,7 @@ command!Rmtrailws %s/\s\+$//g
 command!Bterm bel term
 command!PendingTasks call ShowPendingTasks()
 command!OpenSpec call OpenRailsRspec()
+command!GoToSpec call GoToRailsRspec()
 command!RunFileSpec call RunRailsRspec()
 command!RunFileSpecFailure call RunRailsRspecFailure()
 command!RunNearSpec call RunNearSpec()
@@ -65,6 +66,7 @@ command!GitAdd call GitAdd()
 command!GitLog -nargs=? call GitLog(<f-args>)
 command!GitShow -nargs=? call GitShow(<f-args>)
 command!FormatJSON call FormatJSON()
+command!RunRailsRunner call RunRailsRunner()
 
 ""--AutoCommands
 autocmd BufWinEnter * match ExtraWhitespace /\s\+$/
@@ -80,8 +82,10 @@ nnoremap <leader>ras :RunAllSpecs<cr>
 nnoremap <leader>raf :RunAllFailures<cr>
 nnoremap <leader>rn :RunNearSpec<cr>
 nnoremap <leader>rf :RunFileSpecFailure<cr>
+nnoremap <leader>rrr :RunRailsRunner<cr>
 nnoremap <leader>osf :OpenSpec<cr>
 nnoremap <leader>ost :OpenSpecTarget<cr>
+nnoremap <leader>gsf :GoToSpec<cr>
 nnoremap <leader>vc :ViewChanges<cr>
 nnoremap <leader>ob o<Esc>k
 nnoremap <leader>oa O<Esc>j
@@ -125,6 +129,12 @@ function! OpenRailsRspec()
   execute "silent" "!" "mkdir" "-p" spec_dir
   execute 'vert' 'new' spec_file
   execute "redraw!"
+endfunction
+
+function! GoToRailsRspec()
+  let spec_file = SpecFile()
+  let spec_dir = SpecDir()
+  execute 'e' spec_file
 endfunction
 
 function! RunLastSpecCommand()
@@ -254,7 +264,6 @@ function! MakeBufferScratch()
 endfunction
 
 function! FormatJSON()
-  let target_file=@%
   execute '%!python -m json.tool'
 endfunction
 
@@ -264,6 +273,13 @@ endfunction
 
 function! SelectAroundPipe()
   execute "normal! ^f|vf|"
+endfunction
+
+function! RunRailsRunner(...)
+  let target_file= get(a:, 1, @%)
+  echo target_file
+  let ex_str = 'vert term bin/rails r ' . target_file
+  execute ex_str
 endfunction
 
 ""--- CSCOPE
