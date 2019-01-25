@@ -20,6 +20,7 @@ set laststatus=2
 set statusline=[%n]-%F:%l:%c\ %m
 set path=$PWD/**
 set nocompatible
+set complete-=i
 
 filetype off
 set rtp+=~/.vim/bundle/vundle/
@@ -54,6 +55,7 @@ command!RunAllSpecs call RunAllSpecs()
 command!RunAllFailures call RunAllFailures()
 command!RunLastSpecCommand call RunLastSpecCommand()
 command!OpenSpecTarget call OpenRailsRspecTarget()
+command!GoToSpecTarget call GoToRailsRspecTarget()
 command!SpecFileExist call SpecFileExist()
 command!CopyFileToClipBoard normal gg"+yG
 command!CopyFileNameToClipBoard execute "let @+=@%"
@@ -66,7 +68,9 @@ command!GitAdd call GitAdd()
 command!GitLog -nargs=? call GitLog(<f-args>)
 command!GitShow -nargs=? call GitShow(<f-args>)
 command!FormatJSON call FormatJSON()
+command!FormatXML call FormatXML()
 command!RunRailsRunner call RunRailsRunner()
+command!RemoveFile call RemoveFile()
 
 ""--AutoCommands
 autocmd BufWinEnter * match ExtraWhitespace /\s\+$/
@@ -86,6 +90,7 @@ nnoremap <leader>rrr :RunRailsRunner<cr>
 nnoremap <leader>osf :OpenSpec<cr>
 nnoremap <leader>ost :OpenSpecTarget<cr>
 nnoremap <leader>gsf :GoToSpec<cr>
+nnoremap <leader>gst :GoToSpecTarget<cr>
 nnoremap <leader>vc :ViewChanges<cr>
 nnoremap <leader>ob o<Esc>k
 nnoremap <leader>oa O<Esc>j
@@ -197,14 +202,28 @@ function! SpecFile()
 endfunction
 
 function! OpenRailsRspecTarget()
+  let target_file = SpecTargetFile()
+  let target_dir = SpecTargetDir()
+  execute "silent" "!" "mkdir" "-p" target_dir
+  execute 'vert' 'new' target_file
+  execute "redraw!"
+endfunction
+
+function! GoToRailsRspecTarget()
+  let target_file = SpecTargetFile()
+  execute 'e' target_file
+endfunction
+
+function! SpecTargetFile()
   let current_file = @%
   let target_file = substitute(current_file, '^spec\/', 'app/','')
   let target_file = substitute(target_file, '_spec\.rb$', '\.rb', '')
   let target_file = substitute(target_file, '^spec\/', 'app/','')
-  let target_dir = substitute(target_file, '\(app.*\)\(\/.*rb$\)', '\1', '')
-  execute "silent" "!" "mkdir" "-p" target_dir
-  execute 'vert' 'new' target_file
-  execute "redraw!"
+  return target_file
+endfunction
+
+function! SpecTargetDir()
+  return substitute(SpecTargetFile(), '\(app.*\)\(\/.*rb$\)', '\1', '')
 endfunction
 
 function! SpecFileExist()
@@ -235,6 +254,7 @@ function! GitDiff(...)
   execute 'diffthis'
   execute 'vne | 0read !git show ' . expand(object) . ':' . expand(target_file)
   execute 'set filetype=' . expand(target_file_type)
+  execute 'normal Gdd gg'
   execute 'diffthis'
   call MakeBufferScratch()
   execute "normal! \<C-W>r"
@@ -257,6 +277,12 @@ function! GitAdd(...)
   let job = job_start('git add ' . expand(target_file))
 endfunction
 
+function! RemoveFile()
+  let target_file=@%
+  let job = job_start('rm ' . expand(target_file))
+  bdelete
+endfunction
+
 function! MakeBufferScratch()
   execute 'setlocal buftype=nofile'
   execute 'setlocal bufhidden=hide'
@@ -265,6 +291,10 @@ endfunction
 
 function! FormatJSON()
   execute '%!python -m json.tool'
+endfunction
+
+function! FormatXML()
+  execute '%!xmllint -format -'
 endfunction
 
 function! SelectInnerPipe()
