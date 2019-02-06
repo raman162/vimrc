@@ -4,6 +4,7 @@ let mapleader = " "
 let g:netrw_banner = 0
 let g:netrw_liststyle = 3
 let g:netrw_winsize = 25
+let g:netrw_preview = 1
 
 set nu
 set rnu
@@ -298,11 +299,11 @@ function! FormatXML()
 endfunction
 
 function! SelectInnerPipe()
-  execute "normal! ^f|lvt|"
+  call SelectInnerMatchingPair('|')
 endfunction
 
 function! SelectAroundPipe()
-  execute "normal! ^f|vf|"
+  call SelectAroundMatchingPair('|')
 endfunction
 
 function! RunRailsRunner(...)
@@ -310,6 +311,135 @@ function! RunRailsRunner(...)
   echo target_file
   let ex_str = 'vert term bin/rails r ' . target_file
   execute ex_str
+endfunction
+
+function! RunRuby(...)
+  let target_file= get(a:, 1, @%)
+  echo target_file
+  let ex_str = 'vert term ruby '. target_file
+endfunction
+
+function! VisualSelection(position1, position2)
+  call setpos('.', a:position1)
+  normal! v
+  call setpos('.', a:position2)
+endfunction
+
+function! GetCharUnderCursor()
+  return getline('.')[col('.') - 1]
+endfunction
+
+function! GetCharBeforeCursor()
+  return getline('.')[col('.') - 2]
+endfunction
+
+function GetStringBeforeCursor()
+  let start=0
+  let end = col('.') - 2
+  return getline('.')[start:end]
+endfunction
+
+function! SelectAroundMatchingPair(char)
+  let charUnderCursor = GetCharUnderCursor()
+  let curpos = getcurpos()
+  if charUnderCursor == a:char
+    let stringBeforeCursor = GetStringBeforeCursor()
+    let matchCountBeforeCursor = CountCharInString(stringBeforeCursor, a:char)
+    if IsEven(matchCountBeforeCursor)
+      let beginpos=getcurpos()
+      execute "normal! f".expand(a:char)
+      let endpos=getcurpos()
+      if beginpos != endpos
+        call VisualSelection(beginpos, endpos)
+      else
+        call setpos('.', curpos)
+        call feedkeys("\<esc>")
+      endif
+    else
+      let endpos=getcurpos()
+      execute "normal! F".expand(a:char)
+      let beginpos=getcurpos()
+      call VisualSelection(beginpos, endpos)
+    endif
+  else
+    execute "normal! F".expand(a:char)
+    let beginpos = getcurpos()
+    execute "normal! f".expand(a:char)
+    let endpos = getcurpos()
+    if beginpos != curpos && beginpos != endpos
+      call VisualSelection(beginpos, endpos)
+    else
+      call setpos('.', curpos)
+      call feedkeys("\<esc>")
+    endif
+  endif
+endfunction
+
+function! SelectInnerMatchingPair(char)
+  let charUnderCursor = GetCharUnderCursor()
+  let curpos = getcurpos()
+  if charUnderCursor == a:char
+    let stringBeforeCursor = GetStringBeforeCursor()
+    let matchCountBeforeCursor = CountCharInString(stringBeforeCursor, a:char)
+    if IsEven(matchCountBeforeCursor)
+      normal! l
+      let beginpos=getcurpos()
+      execute "normal! t".expand(a:char)
+      let endpos = getcurpos()
+      if beginpos != endpos
+        call VisualSelection(beginpos, endpos)
+      else
+        call setpos('.', curpos)
+        call feedkeys("\<esc>")
+      endif
+    else
+      normal! h
+      let endpos=getcurpos()
+      execute "normal! T".expand(a:char)
+      let beginpos=getcurpos()
+      call VisualSelection(beginpos, endpos)
+    endif
+  else
+    let charBeforeCursor = GetCharBeforeCursor()
+    if charBeforeCursor == a:char
+      let beginpos=getcurpos()
+      execute "normal! t".expand(a:char)
+      let endpos=getcurpos()
+      if beginpos != endpos
+        call VisualSelection(beginpos, endpos)
+      else
+        call setpos('.', curpos)
+        call feedkeys("\<esc>")
+      endif
+    else
+      execute "normal! T".expand(a:char)
+      let beginpos=getcurpos()
+      execute "normal! t".expand(a:char)
+      let endpos=getcurpos()
+      if beginpos != curpos && beginpos != endpos
+        call VisualSelection(beginpos, endpos)
+      else
+        call setpos('.', curpos)
+        call feedkeys("\<esc>")
+      endif
+    endif
+  endif
+endfunction
+
+function! CountCharInString(string, char)
+  let match_count = 0
+  let i = 0
+  while i <= len(a:string)
+    if a:string[i] == a:char
+      let match_count += 1
+    endif
+    let i+= 1
+  endwhile
+  return match_count
+endfunction
+
+function! IsEven(number)
+  return a:number%2 == 0
 endfunction
 
 ""--- CSCOPE
