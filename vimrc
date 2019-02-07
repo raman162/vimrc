@@ -105,6 +105,8 @@ nnoremap <leader>gl :GitLog<cr>
 ""---Text Object Mappings
 onoremap <silent> i\| :<C-u> call SelectInnerPipe()<cr>
 onoremap <silent> a\| :<C-u> call SelectAroundPipe()<cr>
+onoremap <silent> i** :<C-u> call SelectBetweenMatchingPattern('\*\*')<cr>
+onoremap <silent> a** :<C-u> call SelectAroundMatchingPattern('\*\*')<cr>
 ""---Insert mode mappings
 
 "Quickly insert ruby method
