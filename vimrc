@@ -299,11 +299,11 @@ function! FormatXML()
 endfunction
 
 function! SelectInnerPipe()
-  call SelectInnerMatchingPair('|')
+  call SelectInnerMatchingChar('|')
 endfunction
 
 function! SelectAroundPipe()
-  call SelectAroundMatchingPair('|')
+  call SelectAroundMatchingChar('|')
 endfunction
 
 function! RunRailsRunner(...)
@@ -339,7 +339,13 @@ function GetStringBeforeCursor()
   return getline('.')[start:end]
 endfunction
 
-function! SelectAroundMatchingPair(char)
+function GetStringRelativeToCursor(relnumber)
+  let start=0
+  let end = col('.') + a:relnumber - 1
+  return getline('.')[start:end]
+endfunction
+
+function! SelectAroundMatchingChar(char)
   let charUnderCursor = GetCharUnderCursor()
   let curpos = getcurpos()
   if charUnderCursor == a:char
@@ -375,7 +381,7 @@ function! SelectAroundMatchingPair(char)
   endif
 endfunction
 
-function! SelectInnerMatchingPair(char)
+function! SelectInnerMatchingChar(char)
   let charUnderCursor = GetCharUnderCursor()
   let curpos = getcurpos()
   if charUnderCursor == a:char
@@ -429,7 +435,7 @@ endfunction
 function! CountCharInString(string, char)
   let match_count = 0
   let i = 0
-  while i <= len(a:string)
+  while i < len(a:string)
     if a:string[i] == a:char
       let match_count += 1
     endif
@@ -438,8 +444,105 @@ function! CountCharInString(string, char)
   return match_count
 endfunction
 
+function! CountPatternInString(string, pattern)
+  let split_list = split(a:string, a:pattern, 1)
+  return len(split_list) - 1
+endfunction
+
 function! IsEven(number)
   return a:number%2 == 0
+endfunction
+
+function! IsCursorBetweenPattern(pattern)
+  let pos_before = searchpos(a:pattern, 'bn', line('.'))
+  let pos_after = searchpos(a:pattern, 'zn', line('.'))
+  return pos_before != [0,0] && pos_after != [0,0] && !IsCursorOverPattern(a:pattern)
+endfunction
+
+function! IsCursorOverPattern(pattern)
+  let pos_before = searchpos(a:pattern, 'bnc', line('.'))
+  let pos_before_end = searchpos(a:pattern, 'bnce', line('.'))
+  let curindex = getcurpos()[2]
+  let pos_after = searchpos(a:pattern, 'znc', line('.'))
+  return pos_before != [0,0] && (pos_before == pos_after || (curindex >= pos_before[1] && pos_before_end[1] >= curindex))
+endfunction
+
+function! IsCursorOverBeginPattern(pattern)
+  let str_b_cur = GetStringRelativeToCursor(-1)
+  let ptrn_cnt_b_cur = CountPatternInString(str_b_cur, a:pattern)
+  return IsEven(ptrn_cnt_b_cur) && IsCursorOverPattern(a:pattern)
+endfunction
+
+function! IsCursorOverEndPattern(pattern)
+  let str_b_cur = GetStringRelativeToCursor(-1)
+  let ptrn_cnt_b_cur = CountPatternInString(str_b_cur, a:pattern)
+  return !IsEven(ptrn_cnt_b_cur) && IsCursorOverPattern(a:pattern)
+endfunction
+
+function! SelectAroundMatchingPattern(pattern)
+  let init_pos = getcurpos()
+  if IsCursorBetweenPattern(a:pattern)
+    call searchpos(a:pattern, 'b', line('.'))
+    let begin_pos = getcurpos()
+    call setpos('.', init_pos)
+    call searchpos(a:pattern, 'ze', line('.'))
+    let end_pos = getcurpos()
+    call VisualSelection(begin_pos, end_pos)
+  elseif IsCursorOverBeginPattern(a:pattern)
+    let pos_before = searchpos(a:pattern, 'bc', line('.'))
+    let begin_pos = getcurpos()
+    let pos_after = searchpos(a:pattern, 'z', line('.'))
+    if pos_after != [0,0]
+      let pos_after = searchpos(a:pattern, 'ze', line('.'))
+      let end_pos = getcurpos()
+      call VisualSelection(begin_pos, end_pos)
+    endif
+  elseif IsCursorOverEndPattern(a:pattern)
+    call searchpos(a:pattern, 'bc', line('.'))
+    call searchpos(a:pattern, 'ze', line('.'))
+    let end_pos = getcurpos()
+    call searchpos(a:pattern, 'b', line('.'))
+    call searchpos(a:pattern, 'b', line('.'))
+    let begin_pos = getcurpos()
+    call VisualSelection(begin_pos, end_pos)
+  endif
+endfunction
+
+function! SelectBetweenMatchingPattern(pattern)
+  let init_pos = getcurpos()
+  if IsCursorBetweenPattern(a:pattern)
+    call searchpos(a:pattern, 'be', line('.'))
+    normal! l
+    let begin_pos = getcurpos()
+    call setpos('.', init_pos)
+    call searchpos(a:pattern, 'z', line('.'))
+    normal! h
+    let end_pos = getcurpos()
+    call VisualSelection(begin_pos, end_pos)
+  elseif IsCursorOverBeginPattern(a:pattern)
+    call searchpos(a:pattern, 'bc', line('.'))
+    call searchpos(a:pattern, 'ce', line('.'))
+    normal! l
+    let begin_pos = getcurpos()
+    let pos_after = searchpos(a:pattern, 'z', line('.'))
+    if pos_after != [0,0]
+      normal! h
+      let end_pos = getcurpos()
+      call VisualSelection(begin_pos, end_pos)
+    endif
+  elseif IsCursorOverEndPattern(a:pattern)
+    call searchpos(a:pattern, 'bc', line('.'))
+    normal! h
+    let end_pos = getcurpos()
+    call searchpos(a:pattern, 'be', line('.'))
+    normal! l
+    let begin_pos = getcurpos()
+    call VisualSelection(begin_pos, end_pos)
+  endif
+endfunction!
+
+function! ConvertSearchPosToCursorPos(searchpos)
+  return [0, a:searchpos[0], a:searchpos[1], 0, a:searchpos[1]]
 endfunction
 
 ""--- CSCOPE
