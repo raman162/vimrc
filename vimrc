@@ -103,10 +103,14 @@ nnoremap <leader>gs :GitShow<cr>
 nnoremap <leader>gl :GitLog<cr>
 
 ""---Text Object Mappings
-onoremap <silent> i\| :<C-u> call SelectInnerPipe()<cr>
-onoremap <silent> a\| :<C-u> call SelectAroundPipe()<cr>
+onoremap <silent> i\| :<C-u> call SelectBetweenMatchingPattern('\|')<cr>
+onoremap <silent> a\| :<C-u> call SelectAroundMatchingPattern('\|')<cr>
 onoremap <silent> i** :<C-u> call SelectBetweenMatchingPattern('\*\*')<cr>
 onoremap <silent> a** :<C-u> call SelectAroundMatchingPattern('\*\*')<cr>
+onoremap <silent> i__ :<C-u> call SelectBetweenMatchingPattern('__')<cr>
+onoremap <silent> a__ :<C-u> call SelectAroundMatchingPattern('__')<cr>
+onoremap <silent> i~~ :<C-u> call SelectBetweenMatchingPattern('\~\~')<cr>
+onoremap <silent> a~~ :<C-u> call SelectAroundMatchingPattern('\~\~')<cr>
 ""---Insert mode mappings
 
 "Quickly insert ruby method
@@ -300,14 +304,6 @@ function! FormatXML()
   execute '%!xmllint -format -'
 endfunction
 
-function! SelectInnerPipe()
-  call SelectInnerMatchingChar('|')
-endfunction
-
-function! SelectAroundPipe()
-  call SelectAroundMatchingChar('|')
-endfunction
-
 function! RunRailsRunner(...)
   let target_file= get(a:, 1, @%)
   echo target_file
@@ -327,123 +323,10 @@ function! VisualSelection(position1, position2)
   call setpos('.', a:position2)
 endfunction
 
-function! GetCharUnderCursor()
-  return getline('.')[col('.') - 1]
-endfunction
-
-function! GetCharBeforeCursor()
-  return getline('.')[col('.') - 2]
-endfunction
-
-function GetStringBeforeCursor()
-  let start=0
-  let end = col('.') - 2
-  return getline('.')[start:end]
-endfunction
-
 function GetStringRelativeToCursor(relnumber)
   let start=0
   let end = col('.') + a:relnumber - 1
   return getline('.')[start:end]
-endfunction
-
-function! SelectAroundMatchingChar(char)
-  let charUnderCursor = GetCharUnderCursor()
-  let curpos = getcurpos()
-  if charUnderCursor == a:char
-    let stringBeforeCursor = GetStringBeforeCursor()
-    let matchCountBeforeCursor = CountCharInString(stringBeforeCursor, a:char)
-    if IsEven(matchCountBeforeCursor)
-      let beginpos=getcurpos()
-      execute "normal! f".expand(a:char)
-      let endpos=getcurpos()
-      if beginpos != endpos
-        call VisualSelection(beginpos, endpos)
-      else
-        call setpos('.', curpos)
-        call feedkeys("\<esc>")
-      endif
-    else
-      let endpos=getcurpos()
-      execute "normal! F".expand(a:char)
-      let beginpos=getcurpos()
-      call VisualSelection(beginpos, endpos)
-    endif
-  else
-    execute "normal! F".expand(a:char)
-    let beginpos = getcurpos()
-    execute "normal! f".expand(a:char)
-    let endpos = getcurpos()
-    if beginpos != curpos && beginpos != endpos
-      call VisualSelection(beginpos, endpos)
-    else
-      call setpos('.', curpos)
-      call feedkeys("\<esc>")
-    endif
-  endif
-endfunction
-
-function! SelectInnerMatchingChar(char)
-  let charUnderCursor = GetCharUnderCursor()
-  let curpos = getcurpos()
-  if charUnderCursor == a:char
-    let stringBeforeCursor = GetStringBeforeCursor()
-    let matchCountBeforeCursor = CountCharInString(stringBeforeCursor, a:char)
-    if IsEven(matchCountBeforeCursor)
-      normal! l
-      let beginpos=getcurpos()
-      execute "normal! t".expand(a:char)
-      let endpos = getcurpos()
-      if beginpos != endpos
-        call VisualSelection(beginpos, endpos)
-      else
-        call setpos('.', curpos)
-        call feedkeys("\<esc>")
-      endif
-    else
-      normal! h
-      let endpos=getcurpos()
-      execute "normal! T".expand(a:char)
-      let beginpos=getcurpos()
-      call VisualSelection(beginpos, endpos)
-    endif
-  else
-    let charBeforeCursor = GetCharBeforeCursor()
-    if charBeforeCursor == a:char
-      let beginpos=getcurpos()
-      execute "normal! t".expand(a:char)
-      let endpos=getcurpos()
-      if beginpos != endpos
-        call VisualSelection(beginpos, endpos)
-      else
-        call setpos('.', curpos)
-        call feedkeys("\<esc>")
-      endif
-    else
-      execute "normal! T".expand(a:char)
-      let beginpos=getcurpos()
-      execute "normal! t".expand(a:char)
-      let endpos=getcurpos()
-      if beginpos != curpos && beginpos != endpos
-        call VisualSelection(beginpos, endpos)
-      else
-        call setpos('.', curpos)
-        call feedkeys("\<esc>")
-      endif
-    endif
-  endif
-endfunction
-
-function! CountCharInString(string, char)
-  let match_count = 0
-  let i = 0
-  while i < len(a:string)
-    if a:string[i] == a:char
-      let match_count += 1
-    endif
-    let i+= 1
-  endwhile
-  return match_count
 endfunction
 
 function! CountPatternInString(string, pattern)
@@ -491,11 +374,11 @@ function! SelectAroundMatchingPattern(pattern)
     let end_pos = getcurpos()
     call VisualSelection(begin_pos, end_pos)
   elseif IsCursorOverBeginPattern(a:pattern)
-    let pos_before = searchpos(a:pattern, 'bc', line('.'))
+    call searchpos(a:pattern, 'bc', line('.'))
     let begin_pos = getcurpos()
     let pos_after = searchpos(a:pattern, 'z', line('.'))
     if pos_after != [0,0]
-      let pos_after = searchpos(a:pattern, 'ze', line('.'))
+      call searchpos(a:pattern, 'ze', line('.'))
       let end_pos = getcurpos()
       call VisualSelection(begin_pos, end_pos)
     endif
@@ -542,10 +425,6 @@ function! SelectBetweenMatchingPattern(pattern)
     call VisualSelection(begin_pos, end_pos)
   endif
 endfunction!
-
-function! ConvertSearchPosToCursorPos(searchpos)
-  return [0, a:searchpos[0], a:searchpos[1], 0, a:searchpos[1]]
-endfunction
 
 ""--- CSCOPE
 "##########################################
