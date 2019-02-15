@@ -18,7 +18,7 @@ set background=dark
 set t_Co=256
 set cc=80
 set laststatus=2
-set statusline=[%n]-%F:%l:%c\ %m
+set statusline=[%n][%{winnr()}]-%f:%l:%c\ %m
 set path=$PWD/**
 set nocompatible
 set complete-=i
