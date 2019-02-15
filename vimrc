@@ -101,6 +101,7 @@ nnoremap <leader>gd :GitDiff<cr>
 nnoremap <leader>ga :GitAdd<cr>
 nnoremap <leader>gs :GitShow<cr>
 nnoremap <leader>gl :GitLog<cr>
+nnoremap Y y$
 
 ""---Text Object Mappings
 onoremap <silent> i\| :<C-u> call SelectBetweenMatchingPattern('\|')<cr>
