@@ -290,6 +290,18 @@ function! RemoveFile()
   bdelete
 endfunction
 
+function! RenameFile()
+  call inputsave()
+  let target_file = @%
+  let new_name = input('', target_file)
+  call inputrestore()
+  let init_pos = getcurpos()
+  execute 'write '.new_name
+  call RemoveFile()
+  execute 'edit '.new_name
+  call setpos('.', init_pos)
+endfunction
+
 function! MakeBufferScratch()
   execute 'setlocal buftype=nofile'
   execute 'setlocal bufhidden=hide'
