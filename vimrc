@@ -72,6 +72,10 @@ command!FormatJSON call FormatJSON()
 command!FormatXML call FormatXML()
 command!RunRailsRunner call RunRailsRunner()
 command!RemoveFile call RemoveFile()
+command!Rm call RemoveFile()
+command!MoveFile call MoveFile()
+command!Mv call MoveFile()
+command!RenameFile call MoveFile()
 
 ""--AutoCommands
 autocmd BufWinEnter * match ExtraWhitespace /\s\+$/
@@ -288,18 +292,18 @@ endfunction
 function! RemoveFile()
   let target_file=@%
   let job = job_start('rm ' . expand(target_file))
-  bdelete
+  bdelete!
 endfunction
 
-function! RenameFile()
+function! MoveFile()
   call inputsave()
   let target_file = @%
   let new_name = input('', target_file)
   call inputrestore()
   let init_pos = getcurpos()
-  execute 'write '.new_name
+  execute 'write! '.new_name
   call RemoveFile()
-  execute 'edit '.new_name
+  execute 'edit! '.new_name
   call setpos('.', init_pos)
 endfunction
 
