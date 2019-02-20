@@ -36,6 +36,7 @@ au BufNewFile,BufRead *.hamlc set ft=haml
 
 filetype plugin on
 highlight ExtraWhitespace ctermbg=red guibg=red
+highlight StatusLineNC cterm=bold ctermfg=white ctermbg=darkgray
 
 match ExtraWhitespace /\s\+$/
 
@@ -143,9 +144,32 @@ endfunction
 function! OpenRailsRspec()
   let spec_file = SpecFile()
   let spec_dir = SpecDir()
-  execute "silent" "!" "mkdir" "-p" spec_dir
-  execute 'vert' 'new' spec_file
-  execute "redraw!"
+  call OpenFile(spec_file)
+endfunction
+
+function! OpenFile(file)
+  if filereadable(a:file)
+    if bufwinnr(a:file) > 0
+      return GoToWindow(bufwinnr(a:file))
+    endif
+    if bufexists(a:file)
+      execute 'vert sb' a:file
+    else
+      call MkDirAndOpenFile(a:file)
+    endif
+  else
+    return MkDirAndOpenFile(a:file)
+  endif
+endfunction
+
+function GoToWindow(window_number)
+  execute "normal! ".a:window_number."\<C-W>\<C-W>"
+endfunction
+
+function! MkDirAndOpenFile(file)
+  execute 'silent' '!' 'mkdir' '-p' a:file
+  execute 'vert' 'new' a:file
+  execute 'redraw!'
 endfunction
 
 function! GoToRailsRspec()
@@ -216,9 +240,7 @@ endfunction
 function! OpenRailsRspecTarget()
   let target_file = SpecTargetFile()
   let target_dir = SpecTargetDir()
-  execute "silent" "!" "mkdir" "-p" target_dir
-  execute 'vert' 'new' target_file
-  execute "redraw!"
+  call OpenFile(target_file)
 endfunction
 
 function! GoToRailsRspecTarget()
