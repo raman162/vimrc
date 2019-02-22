@@ -167,9 +167,19 @@ function GoToWindow(window_number)
 endfunction
 
 function! MkDirAndOpenFile(file)
-  execute 'silent' '!' 'mkdir' '-p' a:file
+  let directory = GetDirectoryForFile(a:file)
+  execute 'silent' '!' 'mkdir' '-p' directory
   execute 'vert' 'new' a:file
   execute 'redraw!'
+endfunction
+
+function! GetDirectoryForFile(file)
+  let directory = substitute(a:file, '\/\w\+\(\.\w\+\)\?$', '','')
+  if directory == a:file
+    return ''
+  else
+    return directory
+  endif
 endfunction
 
 function! GoToRailsRspec()
@@ -311,10 +321,10 @@ function! GitAdd(...)
   let job = job_start('git add ' . expand(target_file))
 endfunction
 
-function! RemoveFile()
-  let target_file=@%
+function! RemoveFile(...)
+  let target_file= get(a:, 1, @%)
   let job = job_start('rm ' . expand(target_file))
-  bdelete!
+  execute 'bdelete!' target_file
 endfunction
 
 function! MoveFile()
@@ -324,8 +334,8 @@ function! MoveFile()
   call inputrestore()
   let init_pos = getcurpos()
   execute 'write! '.new_name
-  call RemoveFile()
   execute 'edit! '.new_name
+  call RemoveFile(target_file)
   call setpos('.', init_pos)
 endfunction
 
