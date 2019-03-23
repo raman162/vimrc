@@ -77,6 +77,7 @@ command!Rm call RemoveFile()
 command!MoveFile call MoveFile()
 command!Mv call MoveFile()
 command!RenameFile call MoveFile()
+command!DuplicateFile call DuplicateFile()
 
 ""--AutoCommands
 autocmd BufWinEnter * match ExtraWhitespace /\s\+$/
@@ -113,10 +114,13 @@ onoremap <silent> i\| :<C-u> call SelectBetweenMatchingPattern('\|')<cr>
 onoremap <silent> a\| :<C-u> call SelectAroundMatchingPattern('\|')<cr>
 onoremap <silent> i** :<C-u> call SelectBetweenMatchingPattern('\*\*')<cr>
 onoremap <silent> a** :<C-u> call SelectAroundMatchingPattern('\*\*')<cr>
+onoremap <silent> i_ :<C-u> call SelectBetweenMatchingPattern('_')<cr>
 onoremap <silent> i__ :<C-u> call SelectBetweenMatchingPattern('__')<cr>
 onoremap <silent> a__ :<C-u> call SelectAroundMatchingPattern('__')<cr>
 onoremap <silent> i~~ :<C-u> call SelectBetweenMatchingPattern('\~\~')<cr>
 onoremap <silent> a~~ :<C-u> call SelectAroundMatchingPattern('\~\~')<cr>
+onoremap <silent> i/ :<C-u> call SelectBetweenMatchingPattern('/')<cr>
+onoremap <silent> a/ :<C-u> call SelectAroundMatchingPattern('/')<cr>
 ""---Insert mode mappings
 
 "Quickly insert ruby method
@@ -323,20 +327,29 @@ endfunction
 
 function! RemoveFile(...)
   let target_file= get(a:, 1, @%)
+  echo 'Deleting target file: '.target_file
   let job = job_start('rm ' . expand(target_file))
   execute 'bdelete!' target_file
 endfunction
 
 function! MoveFile()
-  call inputsave()
   let target_file = @%
+  let dup_file = DuplicateFile(target_file)
+  if dup_file != target_file
+    call RemoveFile(target_file)
+  end
+endfunction
+
+function! DuplicateFile(...)
+  let target_file = get(a:, 1, @%)
+  call inputsave()
   let new_name = input('', target_file)
   call inputrestore()
   let init_pos = getcurpos()
   execute 'write! '.new_name
   execute 'edit! '.new_name
-  call RemoveFile(target_file)
   call setpos('.', init_pos)
+  return new_name
 endfunction
 
 function! MakeBufferScratch()
