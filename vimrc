@@ -78,6 +78,8 @@ command!MoveFile call MoveFile()
 command!Mv call MoveFile()
 command!RenameFile call MoveFile()
 command!DuplicateFile call DuplicateFile()
+command!Cp call DuplicateFile()
+command!CopyFile call DuplicateFile()
 
 ""--AutoCommands
 autocmd BufWinEnter * match ExtraWhitespace /\s\+$/
