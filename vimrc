@@ -78,8 +78,6 @@ command!MoveFile call MoveFile()
 command!Mv call MoveFile()
 command!RenameFile call MoveFile()
 command!DuplicateFile call DuplicateFile()
-command!Cp call DuplicateFile()
-command!CopyFile call DuplicateFile()
 
 ""--AutoCommands
 autocmd BufWinEnter * match ExtraWhitespace /\s\+$/
@@ -143,7 +141,7 @@ function! ResizeToHeight()
 endfunction
 
 function! SetMdFileSettings()
-  setl textwidth=80
+  setl textwidth=79
   setl spell
 endfunction
 
