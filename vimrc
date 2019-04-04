@@ -108,6 +108,7 @@ nnoremap <leader>ga :GitAdd<cr>
 nnoremap <leader>gs :GitShow<cr>
 nnoremap <leader>gl :GitLog<cr>
 nnoremap Y y$
+nnoremap <leader>q :qa<cr>
 
 ""---Text Object Mappings
 onoremap <silent> i\| :<C-u> call SelectBetweenMatchingPattern('\|')<cr>
@@ -153,10 +154,11 @@ endfunction
 
 function! OpenFile(file)
   if filereadable(a:file)
-    if bufwinnr(a:file) > 0
-      return GoToWindow(bufwinnr(a:file))
+    let bufmatcher = "^".a:file
+    if bufwinnr(bufmatcher) > 0
+      return GoToWindow(bufwinnr(bufmatcher))
     endif
-    if bufexists(a:file)
+    if bufexists(bufmatcher)
       execute 'vert sb' a:file
     else
       call MkDirAndOpenFile(a:file)
@@ -369,14 +371,24 @@ endfunction
 function! RunRailsRunner(...)
   let target_file= get(a:, 1, @%)
   echo target_file
-  let ex_str = 'vert term bin/rails r ' . target_file
+  let ex_str = 'bel term ' . RailsCommand() . ' r ' . target_file
   execute ex_str
+endfunction
+
+function! RailsCommand()
+  let g:rails_command = get(g:, 'rails_command', 'bin/rails')
+  return g:rails_command
 endfunction
 
 function! RunRuby(...)
   let target_file= get(a:, 1, @%)
   echo target_file
-  let ex_str = 'vert term ruby '. target_file
+  let ex_str = 'bel term ' RubyCommand . ' ' . target_file
+endfunction
+
+function! RubyCommand()
+  let g:ruby_command = get(g:, 'ruby_command', 'ruby')
+  return g:ruby_command
 endfunction
 
 function! VisualSelection(position1, position2)
