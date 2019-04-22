@@ -158,7 +158,7 @@ function! OpenFile(file)
     if bufwinnr(bufmatcher) > 0
       return GoToWindow(bufwinnr(bufmatcher))
     endif
-    if bufexists(bufmatcher)
+    if bufexists(a:file)
       execute 'vert sb' a:file
     else
       call MkDirAndOpenFile(a:file)
