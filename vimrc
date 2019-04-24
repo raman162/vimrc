@@ -66,6 +66,7 @@ command!ViewChanges w !git diff --no-index -- % -
 command!MaxWindow call MaxWindow()
 command!ResizeToHeight call ResizeToHeight()
 command! -nargs=? GitDiff call GitDiff(<f-args>)
+command!GitDiffLog call GitDiffLog()
 command!GitAdd call GitAdd()
 command!GitLog -nargs=? call GitLog(<f-args>)
 command!GitShow -nargs=? call GitShow(<f-args>)
@@ -314,6 +315,33 @@ function! GitLog(...)
   let target_file = get(a:,1, @%)
   execute 'vne | 0read !git log ' .expand(target_file)
   call MakeBufferScratch()
+endfunction
+
+function! GitDiffLog()
+  let target_file_type=&ft
+  let target_file=@%
+  let git_log = system('git log -a --oneline '.expand(target_file))
+  let git_log_list = split(git_log, '\n')
+  let numbered_git_log_list = NumberItemsInStringList(git_log_list)
+  call insert(numbered_git_log_list, 'Select Item by pressing number')
+  let revision_index = inputlist(numbered_git_log_list)
+  if revision_index > 0
+    let orig_revision_index = revision_index - 1
+    let revision = git_log_list[orig_revision_index]
+    let commit_sha = split(revision)[0]
+    call GitDiff(commit_sha)
+  end
+endfunction
+
+function! NumberItemsInStringList(list)
+  let new_list = []
+  let index = 0
+  while index < len(a:list)
+    let item = a:list[index]
+    let index = index + 1
+    call add(new_list, expand(index). ': '.expand(item))
+  endwhile
+  return new_list
 endfunction
 
 function! GitShow(...)
