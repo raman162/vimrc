@@ -22,6 +22,7 @@ set statusline=[%n][%{winnr()}]-%f:%l:%c\ %m
 set path=$PWD/**
 set nocompatible
 set complete-=i
+set undofile
 
 filetype off
 set rtp+=~/.vim/bundle/vundle/
@@ -68,8 +69,8 @@ command!ResizeToHeight call ResizeToHeight()
 command! -nargs=? GitDiff call GitDiff(<f-args>)
 command!GitDiffLog call GitDiffLog()
 command!GitAdd call GitAdd()
-command!GitLog -nargs=? call GitLog(<f-args>)
-command!GitShow -nargs=? call GitShow(<f-args>)
+command! -nargs=? GitLog call GitLog(<f-args>)
+command! -nargs=? GitShow call GitShow(<f-args>)
 command!FormatJSON call FormatJSON()
 command!FormatXML call FormatXML()
 command!RunRailsRunner call RunRailsRunner()
@@ -315,6 +316,9 @@ function! GitLog(...)
   let target_file = get(a:,1, @%)
   execute 'vne | 0read !git log ' .expand(target_file)
   call MakeBufferScratch()
+endfunction
+
+function! GitDiffBranch()
 endfunction
 
 function! GitDiffLog()
