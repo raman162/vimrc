@@ -29,13 +29,15 @@ set rtp+=~/.vim/bundle/vundle/
 call vundle#begin()
   Plugin 'VundleVim/Vundle.vim'
   Plugin 'elixir-editors/vim-elixir'
+  Plugin 'pangloss/vim-javascript'
+  Plugin 'mxw/vim-jsx'
 call vundle#end()
+filetype plugin on
 runtime  macros/matchit.vim
 
 hi ColorColumn ctermbg=8
 au BufNewFile,BufRead *.hamlc set ft=haml
 
-filetype plugin on
 highlight ExtraWhitespace ctermbg=red guibg=red
 highlight StatusLineNC cterm=bold ctermfg=white ctermbg=darkgray
 
@@ -80,6 +82,10 @@ command!MoveFile call MoveFile()
 command!Mv call MoveFile()
 command!RenameFile call MoveFile()
 command!DuplicateFile call DuplicateFile()
+command!CountCharHighlighted call CountCharHighlighted()
+command!CountCharFile call CountCharFile()
+command!CountWordHighlighted call CountWordHighlighted()
+command!CountCharFile call CountWordFile()
 
 ""--AutoCommands
 autocmd BufWinEnter * match ExtraWhitespace /\s\+$/
@@ -87,6 +93,7 @@ autocmd InsertEnter * match ExtraWhitespace /\s\+\%#\@<!$/
 autocmd InsertLeave * match ExtraWhitespace /\s\+$/
 autocmd BufWinLeave * call clearmatches()
 autocmd BufWinEnter *.md exe SetMdFileSettings()
+autocmd FileType gitcommit setlocal spell
 
 ""---Normal mode mappings
 nnoremap <leader>rs :RunFileSpec<cr>
@@ -115,6 +122,8 @@ nnoremap <leader>q :qa<cr>
 ""---Text Object Mappings
 onoremap <silent> i\| :<C-u> call SelectBetweenMatchingPattern('\|')<cr>
 onoremap <silent> a\| :<C-u> call SelectAroundMatchingPattern('\|')<cr>
+onoremap <silent> i* :<C-u> call SelectBetweenMatchingPattern('\*')<cr>
+onoremap <silent> a* :<C-u> call SelectAroundMatchingPattern('\*')<cr>
 onoremap <silent> i** :<C-u> call SelectBetweenMatchingPattern('\*\*')<cr>
 onoremap <silent> a** :<C-u> call SelectAroundMatchingPattern('\*\*')<cr>
 onoremap <silent> i_ :<C-u> call SelectBetweenMatchingPattern('_')<cr>
@@ -131,6 +140,7 @@ inoremap <C-@>d def<cr>end<Esc>kA<space>
 inoremap <C-@>c class<cr>end<Esc>kA<space>
 inoremap <C-@>m module<cr>end<Esc>kA<space>
 inoremap <C-@>b <space>do<cr>end<Esc>kA
+inoremap <F5> <C-R>=strftime("%c")<cr>-
 
 ""---Functions
 function! MaxWindow()
@@ -530,6 +540,34 @@ function! SelectBetweenMatchingPattern(pattern)
     let begin_pos = getcurpos()
     call VisualSelection(begin_pos, end_pos)
   endif
+endfunction!
+
+function! CountCharFile()
+  let char_count = system('wc -c ' . expand('%'))
+  let format_count = substitute(char_count, '\n\+$', '', '')
+  echo format_count
+endfunction!
+
+function! CountWordFile()
+  let word_count = system('wc -w ' . expand('%'))
+  let format_count = substitute(word_count, '\n\+$', '', '')
+  echo format_count
+endfunction!
+
+function! CountCharHighlighted()
+  let highlighted = @*
+  call writefile([highlighted], '/tmp/vim_highlight_count')
+  let char_count = system('wc -c /tmp/vim_highlight_count')
+  let format_count = substitute(char_count, '\n\+$', '', '')
+  echo format_count
+endfunction!
+
+function! CountWordHighlighted()
+  let highlighted = @*
+  call writefile([highlighted], '/tmp/vim_highlight_count')
+  let word_count = system('wc -w /tmp/vim_highlight_count')
+  let format_count = substitute(word_count, '\n\+$', '', '')
+  echo format_count
 endfunction!
 
 ""--- CSCOPE
