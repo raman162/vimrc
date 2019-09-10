@@ -85,7 +85,7 @@ command!DuplicateFile call DuplicateFile()
 command!CountCharHighlighted call CountCharHighlighted()
 command!CountCharFile call CountCharFile()
 command!CountWordHighlighted call CountWordHighlighted()
-command!CountCharFile call CountWordFile()
+command!CountWordFile call CountWordFile()
 
 ""--AutoCommands
 autocmd BufWinEnter * match ExtraWhitespace /\s\+$/
