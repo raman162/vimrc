@@ -144,7 +144,8 @@ inoremap <F5> <C-R>=strftime("%c")<cr>-
 
 ""---Functions
 function! MaxWindow()
-  normal! _|
+  wincmd _
+  wincmd |
 endfunction
 
 function! ResizeToHeight()
