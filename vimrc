@@ -31,6 +31,7 @@ call vundle#begin()
   Plugin 'elixir-editors/vim-elixir'
   Plugin 'pangloss/vim-javascript'
   Plugin 'mxw/vim-jsx'
+  Plugin 'kchmck/vim-coffee-script'
 call vundle#end()
 filetype plugin on
 runtime  macros/matchit.vim
@@ -569,6 +570,12 @@ function! CountWordHighlighted()
   let word_count = system('wc -w /tmp/vim_highlight_count')
   let format_count = substitute(word_count, '\n\+$', '', '')
   echo format_count
+endfunction!
+
+function! Ctags()
+  let ctags_command = get(g:, 'ctags_command', 'ctags -R')
+  let command = "bel term " . ctags_command
+  execute command
 endfunction!
 
 ""--- CSCOPE
