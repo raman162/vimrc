@@ -33,7 +33,7 @@ call vundle#begin()
   Plugin 'mxw/vim-jsx'
   Plugin 'kchmck/vim-coffee-script'
 call vundle#end()
-filetype plugin on
+filetype indent plugin on
 runtime  macros/matchit.vim
 
 hi ColorColumn ctermbg=8
@@ -51,7 +51,7 @@ endif
 ""---Commands
 command!Rmtrailws %s/\s\+$//g
 command!Bterm bel term
-command!PendingTasks call ShowPendingTasks()
+command! -range=% PendingTasks <line1>,<line2> call PendingTasks()
 command!OpenSpec call OpenRailsRspec()
 command!GoToSpec call GoToRailsRspec()
 command!RunFileSpec call RunRailsRspec()
@@ -87,6 +87,7 @@ command!CountCharHighlighted call CountCharHighlighted()
 command!CountCharFile call CountCharFile()
 command!CountWordHighlighted call CountWordHighlighted()
 command!CountWordFile call CountWordFile()
+command!Ctags call Ctags()
 
 ""--AutoCommands
 autocmd BufWinEnter * match ExtraWhitespace /\s\+$/
@@ -301,14 +302,17 @@ function! SpecFileExist()
   endif
 endfunction
 
-function! ShowPendingTasks()
+function! PendingTasks() range
   let current_file_type = &ft
   let current_file = @%
+  execute "".a:firstline.",".a:lastline."w! /tmp/pending-tasks"
   execute 'abo' 'new'
-  execute "read ! grep -E '\\[\\s\\].*$|\\#.*$'" current_file
+  execute "read ! grep -E '\\[\\s\\].*$|\\#.*$' /tmp/pending-tasks"
   execute "1d"
   execute "set syntax=" .current_file_type
   execute "resize 20"
+  call MakeBufferScratch()
+  let job = job_start('rm /tmp/pending-tasks')
 endfunction
 
 function! GitDiff(...)
