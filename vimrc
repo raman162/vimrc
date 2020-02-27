@@ -23,6 +23,9 @@ set path=$PWD/**
 set nocompatible
 set complete-=i
 set undofile
+set backupdir=/tmp//
+set directory=/tmp//
+set undodir=/tmp//
 
 filetype off
 set rtp+=~/.vim/bundle/vundle/
