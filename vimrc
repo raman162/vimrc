@@ -78,6 +78,7 @@ command!GitAdd call GitAdd()
 command! -nargs=? GitLog call GitLog(<f-args>)
 command! -nargs=? GitShow call GitShow(<f-args>)
 command!FormatJSON call FormatJSON()
+command!FormatSQL call FormatSQL()
 command!FormatXML call FormatXML()
 command!RunRailsRunner call RunRailsRunner()
 command!RemoveFile call RemoveFile()
@@ -88,9 +89,10 @@ command!RenameFile call MoveFile()
 command!DuplicateFile call DuplicateFile()
 command!CountCharHighlighted call CountCharHighlighted()
 command!CountCharFile call CountCharFile()
-command!CountWordHighlighted call CountWordHighlighted()
-command!CountWordFile call CountWordFile()
+command! -range=% CountWord <line1>,<line2> call CountWord()
 command!Ctags call Ctags()
+command!MarkdownToPdf call MarkdownToPdf()
+command!MarkdownToHtml call MarkdownToHtml()
 
 ""--AutoCommands
 autocmd BufWinEnter * match ExtraWhitespace /\s\+$/
@@ -419,6 +421,10 @@ function! FormatXML()
   execute '%!xmllint -format -'
 endfunction
 
+function! FormatSQL()
+  execute '%!sqlformat -r -'
+endfunction
+
 function! RunRailsRunner(...)
   let target_file= get(a:, 1, @%)
   echo target_file
@@ -571,9 +577,9 @@ function! CountCharHighlighted()
   echo format_count
 endfunction!
 
-function! CountWordHighlighted()
+function! CountWord() range
   let highlighted = @*
-  call writefile([highlighted], '/tmp/vim_highlight_count')
+  execute "".a:firstline.",".a:lastline."w! /tmp/vim_highlight_count"
   let word_count = system('wc -w /tmp/vim_highlight_count')
   let format_count = substitute(word_count, '\n\+$', '', '')
   echo format_count
@@ -583,6 +589,22 @@ function! Ctags()
   let ctags_command = get(g:, 'ctags_command', 'ctags -R')
   let command = "bel term " . ctags_command
   execute command
+endfunction!
+
+function! MarkdownToPdf()
+  let current_file = @%
+  let output_file  = substitute(current_file, '\.md', '.pdf', '')
+  execute 'silent' '!' 'pandoc --pdf-engine=xelatex -V geometry:margin=1.25in' current_file ' -o ' output_file
+  redraw!
+  echo 'generated pdf: ' output_file
+endfunction!
+
+function! MarkdownToHtml()
+  let current_file = @%
+  let output_file  = substitute(current_file, '\.md', '.html', '')
+  execute 'silent' '!' 'pandoc -f gfm ' current_file ' -o ' output_file
+  redraw!
+  echo 'generated html: ' output_file
 endfunction!
 
 ""--- CSCOPE
@@ -646,3 +668,4 @@ nnoremap <C-@><C-@>f :vert scs find f <C-R>=expand("<cfile>")<CR><CR>
 nnoremap <C-@><C-@>i :vert scs find i ^<C-R>=expand("<cfile>")<CR>$<CR>
 nnoremap <C-@><C-@>d :vert scs find d <C-R>=expand("<cword>")<CR><CR>
 "##########################################
+
