@@ -16,7 +16,6 @@ set exrc
 set secure
 set background=dark
 set t_Co=256
-set cc=80
 set laststatus=2
 set statusline=[%n][%{winnr()}]-%f:%l:%c\ %m
 set path=$PWD/**
@@ -35,6 +34,8 @@ call vundle#begin()
   Plugin 'pangloss/vim-javascript'
   Plugin 'mxw/vim-jsx'
   Plugin 'kchmck/vim-coffee-script'
+  Plugin 'junegunn/fzf'
+  Plugin 'junegunn/fzf.vim'
 call vundle#end()
 filetype indent plugin on
 runtime  macros/matchit.vim
@@ -125,6 +126,7 @@ nnoremap <leader>gs :GitShow<cr>
 nnoremap <leader>gl :GitLog<cr>
 nnoremap Y y$
 nnoremap <leader>q :qa<cr>
+nnoremap <leader>f :FZF<cr>
 
 ""---Text Object Mappings
 onoremap <silent> i\| :<C-u> call SelectBetweenMatchingPattern('\|')<cr>
@@ -668,4 +670,3 @@ nnoremap <C-@><C-@>f :vert scs find f <C-R>=expand("<cfile>")<CR><CR>
 nnoremap <C-@><C-@>i :vert scs find i ^<C-R>=expand("<cfile>")<CR>$<CR>
 nnoremap <C-@><C-@>d :vert scs find d <C-R>=expand("<cword>")<CR><CR>
 "##########################################
-
