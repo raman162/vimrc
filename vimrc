@@ -36,6 +36,7 @@ call vundle#begin()
   Plugin 'kchmck/vim-coffee-script'
   Plugin 'junegunn/fzf'
   Plugin 'junegunn/fzf.vim'
+  Plugin 'preservim/nerdtree'
 call vundle#end()
 filetype indent plugin on
 runtime  macros/matchit.vim
@@ -94,6 +95,7 @@ command! -range=% CountWord <line1>,<line2> call CountWord()
 command!Ctags call Ctags()
 command!MarkdownToPdf call MarkdownToPdf()
 command!MarkdownToHtml call MarkdownToHtml()
+command!SetupMarkdownFolding call SetupMarkdownFolding()
 
 ""--AutoCommands
 autocmd BufWinEnter * match ExtraWhitespace /\s\+$/
@@ -102,6 +104,11 @@ autocmd InsertLeave * match ExtraWhitespace /\s\+$/
 autocmd BufWinLeave * call clearmatches()
 autocmd BufWinEnter *.md exe SetMdFileSettings()
 autocmd FileType gitcommit setlocal spell
+
+augroup markdown_folding
+  autocmd!
+  autocmd FileType markdown call SetupMarkdownFolding()
+augroup END
 
 ""---Normal mode mappings
 nnoremap <leader>rs :RunFileSpec<cr>
@@ -126,7 +133,8 @@ nnoremap <leader>gs :GitShow<cr>
 nnoremap <leader>gl :GitLog<cr>
 nnoremap Y y$
 nnoremap <leader>q :qa<cr>
-nnoremap <leader>f :FZF<cr>
+nnoremap <leader>f :GFiles<cr>
+nnoremap <leader>t :NERDTreeToggle<cr>
 
 ""---Text Object Mappings
 onoremap <silent> i\| :<C-u> call SelectBetweenMatchingPattern('\|')<cr>
@@ -608,6 +616,11 @@ function! MarkdownToHtml()
   redraw!
   echo 'generated html: ' output_file
 endfunction!
+
+function! SetupMarkdownFolding()
+  setlocal foldmethod=indent
+  setlocal foldcolumn=1
+endfunction
 
 ""--- CSCOPE
 "##########################################
