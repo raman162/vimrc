@@ -6,6 +6,8 @@ let g:netrw_liststyle = 3
 let g:netrw_winsize = 25
 let g:netrw_preview = 1
 
+syntax on
+
 set nu
 set rnu
 set spr
@@ -108,6 +110,7 @@ autocmd FileType gitcommit setlocal spell
 augroup markdown_folding
   autocmd!
   autocmd FileType markdown call SetupMarkdownFolding()
+  autocmd FileType markdown 
 augroup END
 
 ""---Normal mode mappings
@@ -174,6 +177,7 @@ endfunction
 function! SetMdFileSettings()
   setl textwidth=79
   setl spell
+  setl shiftwidth=2 tabstop=2
 endfunction
 
 function! OpenRailsRspec()
