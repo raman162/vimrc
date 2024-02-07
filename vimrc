@@ -110,7 +110,7 @@ autocmd FileType gitcommit setlocal spell
 augroup markdown_folding
   autocmd!
   autocmd FileType markdown call SetupMarkdownFolding()
-  autocmd FileType markdown 
+  autocmd FileType markdown setlocal shiftwidth=2 tabstop=2
 augroup END
 
 ""---Normal mode mappings
